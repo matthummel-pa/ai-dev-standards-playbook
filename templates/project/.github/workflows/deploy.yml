@@ -1,0 +1,132 @@
+name: Deploy to production
+
+# Needs repo variables SITE_URL (https://example.com) and THEME_SLUG (theme folder name).
+# Merge to main → build → ship to Hostinger over SSH → health check → auto-rollback on failure.
+# Manual run (Actions → Deploy → Run workflow) redeploys any commit or tag: use it to roll back.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - '.claude/**'
+      - '.cursor/**'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Commit SHA, tag or branch to deploy (blank = main)'
+        required: false
+        default: ''
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false   # never kill a deploy halfway through the swap
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Check & build
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.meta.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - id: meta
+        run: echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      # Gate: same checks as CI, so a bad merge never reaches the server.
+      - run: composer install --no-interaction --prefer-dist
+      - run: vendor/bin/pint --test
+
+      # Production build
+      - run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+      - run: npm ci && npm run build
+      - run: bash .github/scripts/pack-theme.sh "${{ vars.THEME_SLUG }}" "$GITHUB_WORKSPACE/theme.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: theme-build
+          path: theme.zip
+          retention-days: 30
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to Hostinger
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.SITE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: theme-build
+
+      - name: Load SSH key
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.HOSTINGER_SSH_KEY }}" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          ssh-keyscan -p "${{ secrets.HOSTINGER_SSH_PORT }}" -H "${{ secrets.HOSTINGER_SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Upload zip and swap theme
+        env:
+          SSH: ssh -i ~/.ssh/deploy -p ${{ secrets.HOSTINGER_SSH_PORT }} ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}
+          SCP: scp -i ~/.ssh/deploy -P ${{ secrets.HOSTINGER_SSH_PORT }}
+          TARGET: ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}
+          WP_PATH: ${{ secrets.HOSTINGER_WP_PATH }}
+          SHA: ${{ needs.build.outputs.sha }}
+        run: |
+          $SCP theme.zip .github/scripts/server-deploy.sh "$TARGET:~/"
+          $SSH "bash ~/server-deploy.sh '$WP_PATH' '$SHA' deploy '${{ vars.THEME_SLUG }}'"
+
+      - name: Health check (homepage, REST, CSS)
+        id: health
+        run: bash .github/scripts/health-check.sh "${{ vars.SITE_URL }}" "${{ vars.THEME_SLUG }}"
+
+      - name: Roll back on failed health check
+        if: failure() && steps.health.outcome == 'failure'
+        env:
+          SSH: ssh -i ~/.ssh/deploy -p ${{ secrets.HOSTINGER_SSH_PORT }} ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}
+          WP_PATH: ${{ secrets.HOSTINGER_WP_PATH }}
+        run: |
+          $SSH "bash ~/server-deploy.sh '$WP_PATH' '-' rollback '${{ vars.THEME_SLUG }}'"
+          bash .github/scripts/health-check.sh "${{ vars.SITE_URL }}" "${{ vars.THEME_SLUG }}"
+
+      - name: Keep the build as a release (rollback copy)
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: theme-latest
+          name: Latest theme build
+          body: 'Deployed ${{ needs.build.outputs.sha }} to ${{ vars.SITE_URL }}.'
+          files: theme.zip
+          make_latest: true
+          target_commitish: ${{ github.sha }}

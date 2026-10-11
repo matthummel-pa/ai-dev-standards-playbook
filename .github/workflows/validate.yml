@@ -1,0 +1,29 @@
+name: Validate playbook
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Frontmatter, size budgets, private-detail scan
+        run: python3 scripts/validate.py
+
+      - name: Shell scripts
+        run: shellcheck scripts/*.sh hooks/*.sh templates/project/.github/scripts/*.sh templates/project/tools/*.sh
+
+      - name: CHANGELOG updated with rule changes
+        if: github.event_name == 'pull_request'
+        run: |
+          changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          if echo "$changed" | grep -qE '^(rules|skills|commands|agents|hooks|templates)/' && ! echo "$changed" | grep -qx 'CHANGELOG.md'; then
+            echo "::error::Rules or templates changed without a CHANGELOG.md entry."
+            exit 1
+          fi

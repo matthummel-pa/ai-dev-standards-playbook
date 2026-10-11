@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Copy templates/project into the current repo without overwriting anything.
+# Usage (from the project root): bash ~/code/ai-dev-standards-playbook/scripts/new-project.sh <theme_slug> <site_url>
+set -euo pipefail
+repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+slug="${1:?theme slug}"; url="${2:?site url (https://example.com)}"
+name="$(basename "$(pwd)")"
+src="$repo/templates/project"
+skipped=()
+while IFS= read -r -d '' f; do
+  rel="${f#"$src"/}"
+  if [ -e "$rel" ]; then skipped+=("$rel"); continue; fi
+  mkdir -p "$(dirname "$rel")"
+  sed -e "s#{{PROJECT_NAME}}#$name#g" -e "s#{{THEME_SLUG}}#$slug#g" -e "s#{{SITE_URL}}#$url#g" "$f" > "$rel"
+  case "$rel" in *.sh) chmod +x "$rel" ;; esac
+  echo "added   $rel"
+done < <(find "$src" -type f -print0)
+for s in "${skipped[@]:-}"; do [ -n "$s" ] && echo "skipped $s (exists — merge by hand)"; done

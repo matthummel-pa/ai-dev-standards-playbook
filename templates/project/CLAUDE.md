@@ -18,5 +18,8 @@ health check → auto-rollback if unhealthy. Roll back by hand: Actions → Depl
 - TODO: where visitor copy lives (field registry, ACF, wp-admin).
 - TODO: dark-mode class, design tokens file, anything agents must not change.
 
+## Reference docs
+Official sources and the verify-before-coding rule: `doc-references` skill (playbook). Project-specific docs: TODO.
+
 ## Ask first
 DNS, PHP version, production database writes, deleting content/users/plugins, spending money, secrets.

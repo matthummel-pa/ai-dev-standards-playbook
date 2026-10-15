@@ -2,6 +2,16 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.1.0] - 2026-10-14
+
+### Added
+- `skills/doc-references/`: canonical reference docs for the stack (WordPress, Roots/Bedrock, Tailwind, MDN, WHATWG, W3C/ARIA APG, web.dev, Modern CSS, caniuse, cssdb, JavaScript.info, TypeScript, React, Next.js, Node, NestJS, Ahrefs, WP Bones environments) grouped by domain, with a verify-before-coding rule and source precedence.
+- `templates/project/.claude/settings.json`: `WebFetch` allowed on every domain in `doc-references`, so verification never prompts.
+
+### Changed
+- `rules/core.md`: one line pointing to `doc-references` for versioned APIs.
+- `templates/project/CLAUDE.md`: a "Reference docs" section.
+
 ## [1.0.0] - 2026-10-11
 
 ### Added

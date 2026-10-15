@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voiceover Booth</title>
+<meta name="description" content="Teleprompter and coach for recording narration line by line: live pace and pitch meters, script marking, countdown, take scoring, and a zip export for the video pipeline.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Booth: header, prompter (center), coach rail (right). Dark-first in Matt's navy/cyan/lime brand. */
+:root{
+  --bg:#081527; --bg2:#0b1b35; --card:#0e2140; --line:#1c3358; --ink:#f1f5fb; --soft:#b7c6dc; --muted:#7d8fb0;
+  --accent:#22d3ee; --lime:#a3e635; --lime-ink:#0a1a33; --rec:#fb7185; --amber:#fbbf24; --blue:#3b82f6;
+  --display:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){ --bg:#f4f7fb; --bg2:#fff; --card:#fff; --line:#d5dde8; --ink:#0f1623; --soft:#3b4a63; --muted:#6b7a94; --accent:#1d5fd6; --lime:#65a30d; --lime-ink:#fff; --rec:#dc2626; --amber:#b45309; --blue:#1d5fd6; color-scheme:light } }
+:root[data-theme="light"]{ --bg:#f4f7fb; --bg2:#fff; --card:#fff; --line:#d5dde8; --ink:#0f1623; --soft:#3b4a63; --muted:#6b7a94; --accent:#1d5fd6; --lime:#65a30d; --lime-ink:#fff; --rec:#dc2626; --amber:#b45309; --blue:#1d5fd6; color-scheme:light }
+html,body{height:100%}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);display:flex;flex-direction:column;gap:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px}
+button{font:inherit;color:inherit;cursor:pointer;border:1.5px solid var(--line);background:var(--bg2);border-radius:999px;padding:.5em 1em}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.45;cursor:default}
+.b-lime{background:var(--lime);color:var(--lime-ink);border-color:transparent;font-weight:700}
+.b-rec{background:var(--rec);color:#fff;border-color:transparent;font-weight:700}
+.b-ghost{background:none}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.brand{font:900 13px var(--display);letter-spacing:.06em;background:linear-gradient(90deg,#3b82f6,#22d3ee 52%,#a3e635);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font:800 clamp(17px,2.2vw,21px)/1.1 var(--display);letter-spacing:-.02em;margin:0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button[aria-selected="true"]{border-color:var(--accent);color:var(--accent)}
+.right{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:10px}
+@media (max-width:900px){ main{grid-template-columns:1fr} aside{order:2} }
+.prompter{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:clamp(16px,2.6vw,30px);display:flex;flex-direction:column;gap:12px;min-height:0;box-shadow:inset 0 1px 0 rgba(103,232,249,.08);position:relative}
+.prompter.live{border-color:var(--rec);box-shadow:0 0 0 3px color-mix(in srgb,var(--rec) 35%,transparent)}
+.meta{font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:flex;gap:14px;flex-wrap:wrap}
+.meta .intent{color:var(--lime)}
+.prev,.next{color:var(--muted);font-size:clamp(13px,1.5vw,17px);min-height:1.5em}
+.line{font:700 clamp(24px,3.4vw,42px)/1.3 var(--display);letter-spacing:-.02em;text-wrap:balance;flex:1;display:flex;align-items:center;min-height:0}
+.line .op{text-decoration:underline;text-decoration-color:var(--lime);text-decoration-thickness:3px;text-underline-offset:6px}
+.line .p{color:var(--accent);font-weight:600;margin:0 .08em}
+.line .fall{color:var(--muted);font-size:.7em;vertical-align:middle}
+.line code{font:600 .78em var(--mono);background:color-mix(in srgb,var(--accent) 14%,transparent);padding:.05em .3em;border-radius:6px}
+.coachline{font-size:14px;color:var(--soft);display:flex;gap:8px;align-items:flex-start;min-height:1.5em}
+.coachline b{color:var(--lime)}
+.gauges{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:560px){.gauges{grid-template-columns:1fr}}
+.g{background:var(--bg2);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:4px}
+.g h3{margin:0;font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+.g h3 span{color:var(--ink);font-variant-numeric:tabular-nums}
+.track{position:relative;height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.track .band{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--lime) 28%,transparent)}
+.track .pin{position:absolute;top:-2px;width:4px;height:14px;background:var(--ink);border-radius:2px;transition:left .12s}
+.track .fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--blue),var(--accent));transition:width .08s}
+.track .fill.over{background:var(--amber)}
+.g .hint{font-size:12px;color:var(--muted)}
+canvas.pitch{width:100%;height:46px;display:block;border-radius:8px;background:var(--line)}
+.status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--soft);font-size:13px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--muted);flex:none}
+.live .dot{background:var(--rec);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.live .dot{animation:none}}
+.meter{flex:1;min-width:100px;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--lime) 70%,var(--rec));transition:width .05s}
+.time{font:500 13px var(--mono);font-variant-numeric:tabular-nums;min-width:4ch}
+.transport{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.transport .big{padding:.75em 1.4em;font-size:16px}
+kbd{font:500 11px var(--mono);border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--muted);margin-left:.4em}
+.count{position:absolute;inset:0;display:grid;place-items:center;font:900 clamp(120px,22vw,240px) var(--display);color:transparent;-webkit-text-stroke:3px rgba(103,232,249,.7);background:color-mix(in srgb,var(--bg) 70%,transparent);border-radius:18px;z-index:3}
+.count small{position:absolute;bottom:14%;font:500 14px var(--mono);letter-spacing:.2em;color:var(--accent);-webkit-text-stroke:0}
+aside{display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto}
+.panel{background:var(--bg2);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-height:0;flex:none}
+.panel h2{font:700 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0;display:flex;justify-content:space-between;align-items:center}
+.panel h2 button{padding:.15em .6em;font-size:12px}
+.score{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;font-size:13px;align-items:center}
+.score .k{color:var(--muted)}.score .v{font-variant-numeric:tabular-nums;text-align:right}
+.score .bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.score .bar i{display:block;height:100%}
+.ok{color:var(--lime)}.warn{color:var(--amber)}.bad{color:var(--rec)}
+.verdict{font:700 14px var(--display);padding:6px 10px;border-radius:8px;background:color-mix(in srgb,var(--lime) 15%,transparent);color:var(--lime)}
+.verdict.retake{background:color-mix(in srgb,var(--amber) 15%,transparent);color:var(--amber)}
+.list{overflow:auto;min-height:0;display:flex;flex-direction:column;gap:2px;max-height:38vh}
+.row{display:flex;gap:8px;align-items:center;padding:5px 8px;border-radius:8px;border:0;background:none;text-align:left;font-size:13px;color:var(--soft);width:100%}
+.row[aria-current="true"]{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--ink)}
+.row .n{font:500 11px var(--mono);color:var(--muted);min-width:2.2ch;text-align:right}
+.row .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .s{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.row.done .s{background:var(--lime)}.row.flag .s{background:var(--amber)}
+.scene{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 8px 2px}
+.tips{font-size:13px;color:var(--soft);margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.tips li::marker{color:var(--accent)}
+.progress{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#3b82f6,#22d3ee 52%,#a3e635);width:0;transition:width .3s}
+.note{font-size:12.5px;color:var(--muted)}
+.settings{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;font-size:13px}
+.settings input[type=number],.settings select{width:88px;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit}
+.settings label{color:var(--soft)}
+.presets{display:flex;gap:6px;flex-wrap:wrap}.presets button{padding:.3em .8em;font-size:12px}
+.presets button[aria-pressed="true"]{border-color:var(--lime);color:var(--lime)}
+textarea{width:100%;min-height:120px;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font:13px/1.45 var(--mono)}
+dialog{background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:16px;padding:18px 20px;max-width:720px;width:min(92vw,720px)}
+dialog::backdrop{background:rgba(2,6,14,.6)}
+dialog h2{margin:0 0 6px;font:800 18px var(--display)}
+.check{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.check label{display:flex;gap:10px;align-items:flex-start}
+.check input{margin-top:4px;accent-color:var(--lime)}
+.room{font:500 13px var(--mono);color:var(--soft)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">MATT HUMMEL</span>
+  <h1 id="title">Voiceover Booth</h1>
+  <div class="tabs" role="tablist" aria-label="Cut" id="tabs"></div>
+  <div class="right">
+    <button class="b-ghost" id="warmupBtn">Warm-up &amp; mic check</button>
+    <button class="b-ghost" id="scriptBtn">Load script</button>
+  </div>
+</header>
+
+<main>
+  <section class="prompter" id="prompter" aria-live="polite">
+    <div class="meta"><span id="sceneLabel"></span><span class="intent" id="intent"></span></div>
+    <div class="prev" id="prev"></div>
+    <div class="line" id="line"></div>
+    <div class="next" id="next"></div>
+    <div class="coachline" id="coach"></div>
+    <div class="gauges">
+      <div class="g"><h3>Pace <span id="paceV">—</span></h3><div class="track"><div class="band" id="paceBand"></div><div class="pin" id="pacePin" style="left:-10px"></div></div><div class="hint" id="paceHint">target band in green · words/min as you speak</div></div>
+      <div class="g"><h3>Line length <span id="lenV">—</span></h3><div class="track"><div class="fill" id="lenFill"></div><div class="pin" id="lenPin"></div></div><div class="hint" id="lenHint">expected time for this line at target pace</div></div>
+      <div class="g"><h3>Melody <span id="pitchV">—</span></h3><canvas class="pitch" id="pitchC" width="300" height="46"></canvas><div class="hint">pitch trace · flat line = monotone</div></div>
+    </div>
+    <div class="status">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="state">Ready. Space to record.</span>
+      <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+      <span class="time" id="time">0.0s</span>
+    </div>
+    <div class="transport">
+      <button class="big b-rec" id="recBtn">● Record<kbd>space</kbd></button>
+      <button id="playBtn" disabled>▶ Play<kbd>P</kbd></button>
+      <button id="prevBtn">‹ Back<kbd>←</kbd></button>
+      <button id="nextBtn">Next ›<kbd>→</kbd></button>
+      <button id="retakeBtn" disabled>Retake<kbd>R</kbd></button>
+      <button id="keepBtn" disabled>Keep &amp; next<kbd>↵</kbd></button>
+    </div>
+    <div class="count" id="count" hidden>3<small>BREATHE IN · LET A LITTLE OUT</small></div>
+  </section>
+
+  <aside>
+    <div class="panel">
+      <h2>Last take</h2>
+      <div id="scoreBox"><div class="note">Record a line to see its score: pace, melody, hesitations, level.</div></div>
+    </div>
+    <div class="panel">
+      <h2>Progress</h2>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="note" id="count2">0 recorded</div>
+      <button class="b-lime" id="exportBtn" disabled>Download all takes (.zip)</button>
+      <div class="note" id="exportNote">Attach the zip in the chat; the pipeline trims, cleans, levels and rebuilds the video to your pacing.</div>
+    </div>
+    <div class="panel">
+      <h2>Lines <button class="b-ghost" id="flagBtn" title="Jump to next flagged line">next flagged</button></h2>
+      <div class="list" id="list"></div>
+    </div>
+    <div class="panel">
+      <h2>Expert settings <button class="b-ghost" id="resetBtn">reset</button></h2>
+      <div class="presets" id="presets">
+        <button data-p="soft" aria-pressed="true">Soft &amp; warm</button>
+        <button data-p="tutorial">Tutorial</button>
+        <button data-p="short">Shorts / TikTok</button>
+      </div>
+      <div class="settings">
+        <label for="s_wpm">Target pace (wpm)</label><input type="number" id="s_wpm" min="90" max="220" step="5">
+        <label for="s_tol">Pace tolerance (±wpm)</label><input type="number" id="s_tol" min="5" max="60" step="5">
+        <label for="s_st">Min melody (semitones)</label><input type="number" id="s_st" min="0.5" max="6" step="0.5">
+        <label for="s_pause">Max hesitation (s)</label><input type="number" id="s_pause" min="0.2" max="1" step="0.05">
+        <label for="s_count">Countdown</label><select id="s_count"><option value="0">off</option><option value="1">1 s</option><option value="3">3 s</option></select>
+        <label for="s_auto">Auto-advance after take</label><select id="s_auto"><option value="1">on</option><option value="0">off</option></select>
+        <label for="s_mark">Script marking</label><select id="s_mark"><option value="1">on</option><option value="0">off</option></select>
+        <label for="s_gain">Mic gain check</label><span class="room" id="room">not measured</span>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>While you record</h2>
+      <ul class="tips">
+        <li>One listener. Talk to one person, not a microphone.</li>
+        <li>Short lines slower than long ones. Leave a beat after.</li>
+        <li>Lift one underlined word per sentence. Let the ending settle.</li>
+        <li>Breathe in, let a little out, then speak. No gasp.</li>
+        <li>Stumble? Stop, breathe, <kbd>R</kbd>, go again from the top.</li>
+        <li>Same distance every take: one side-turned fist from the mic.</li>
+      </ul>
+    </div>
+  </aside>
+</main>
+
+<dialog id="warmup">
+  <h2>Warm-up and mic check</h2>
+  <div class="check">
+    <label><input type="checkbox"> Water nearby. No coffee, milk or soda in the last 30 minutes.</label>
+    <label><input type="checkbox"> Hum for 20 seconds, low to high. Then "red leather, yellow leather" ×5.</label>
+    <label><input type="checkbox"> Belly breathing: hand on stomach, 5 slow breaths.</label>
+    <label><input type="checkbox"> Read the whole script aloud once, out loud, at full voice.</label>
+    <label><input type="checkbox"> Mic one side-turned fist away, slightly off-center, pop filter on. Say "peter piper" and watch the meter for pops.</label>
+    <label><input type="checkbox"> Headphones on. Phone silent, fans off, door closed.</label>
+    <label><input type="checkbox"> Sit up or stand. Script at eye level. Smile on the hook.</label>
+  </div>
+  <p class="note" style="margin:12px 0 6px">Room tone: records 3 seconds of silence and reports the noise floor. Under −55 dB is good; over −45 dB means find a quieter spot or move closer.</p>
+  <div class="transport"><button id="roomBtn">Measure room tone</button><span class="room" id="roomOut"></span><button class="b-lime" id="warmDone" style="margin-left:auto">Ready</button></div>
+</dialog>
+
+<dialog id="scriptDlg">
+  <h2>Load a script</h2>
+  <p class="note">Paste one line per row. Start a scene with <code>## Scene name</code>. Add an intention in brackets at the end of a line, like <code>[reassuring]</code>. Or paste the <code>script.json</code> from the video pipeline.</p>
+  <textarea id="scriptText" placeholder="## Hook
+I was typing the same prompts into Claude Code over and over. [warm]
+The same security rules. The same accessibility checks. Every single session.
+## At a glance
+Here's the short version."></textarea>
+  <div class="transport" style="margin-top:10px"><input id="scriptName" placeholder="Script name (e.g. playbook-youtube)" style="flex:1;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font:inherit"><button class="b-ghost" id="scriptCancel">Cancel</button><button class="b-lime" id="scriptLoad">Load</button></div>
+  <p class="note" id="savedScripts"></p>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+/* ============ built-in script (the playbook video) ============ */
+const BUILTIN = {"youtube": [{"scene": "hook", "label": "Hook", "i": 0, "text": "I was typing the same prompts into Claude Code over and over.", "intent": "warm, like telling a friend"}, {"scene": "hook", "label": "Hook", "i": 1, "text": "The same security rules. The same accessibility checks. Every single session."}, {"scene": "hook", "label": "Hook", "i": 2, "text": "So I put all of it in one public repo, and now every machine I use pulls it automatically."}, {"scene": "glance", "label": "At a glance", "i": 0, "text": "Here's the short version."}, {"scene": "glance", "label": "At a glance", "i": 1, "text": "One repo holds my coding standards, SEO rules, writing voice, reference docs, slash commands, a reviewer agent, and a deploy kit.", "intent": "a list: give each item its own pitch"}, {"scene": "glance", "label": "At a glance", "i": 2, "text": "Only one rule is always on, and it's under 1 KB."}, {"scene": "glance", "label": "At a glance", "i": 3, "text": "Everything else loads by file path, or when a skill is used."}, {"scene": "glance", "label": "At a glance", "i": 4, "text": "And a merge to main updates every machine on its next session."}, {"scene": "why", "label": "Why", "i": 0, "text": "Two problems pushed me into this."}, {"scene": "why", "label": "Why", "i": 1, "text": "My rules lived inside one theme repo, so they didn't follow me to the next client."}, {"scene": "why", "label": "Why", "i": 2, "text": "And they were all always on. Ten rule files, about 60 KB, loaded into every session."}, {"scene": "why", "label": "Why", "i": 3, "text": "Even when I was just writing a blog post."}, {"scene": "why", "label": "Why", "i": 4, "text": "Every one of those prompts counted against my credits."}, {"scene": "fix", "label": "The fix", "i": 0, "text": "The fix was to split by trigger."}, {"scene": "fix", "label": "The fix", "i": 1, "text": "The core rule is now 0.9 KB."}, {"scene": "fix", "label": "The fix", "i": 2, "text": "The rest only load when Claude touches a matching file, or picks a skill."}, {"scene": "fix", "label": "The fix", "i": 3, "text": "Same standards. A fraction of the context.", "intent": "slow. let it land"}, {"scene": "flow", "label": "How it loads", "i": 0, "text": "Here's how it gets into Claude Code."}, {"scene": "flow", "label": "How it loads", "i": 1, "text": "install.sh copies the repo into ~/.claude once, and adds a session start hook."}, {"scene": "flow", "label": "How it loads", "i": 2, "text": "From then on, every new session runs sync.sh. It does a git pull, and recopies the files."}, {"scene": "flow", "label": "How it loads", "i": 3, "text": "Merge a change on GitHub, and it's everywhere the next day."}, {"scene": "layers", "label": "What loads when", "i": 0, "text": "Think of it as three layers."}, {"scene": "layers", "label": "What loads when", "i": 1, "text": "Always on: the core rule and the project's CLAUDE.md."}, {"scene": "layers", "label": "What loads when", "i": 2, "text": "By file path: the WordPress, Sage, and SEO rules."}, {"scene": "layers", "label": "What loads when", "i": 3, "text": "On demand: skills, slash commands, and the reviewer agent."}, {"scene": "rules", "label": "Rules", "i": 0, "text": "The rules watch the files."}, {"scene": "rules", "label": "Rules", "i": 1, "text": "Each one has a paths list in its frontmatter."}, {"scene": "rules", "label": "Rules", "i": 2, "text": "Open a PHP file, and the WordPress rules are in context."}, {"scene": "rules", "label": "Rules", "i": 3, "text": "Open a Blade template, and the Sage and SEO rules are there. I never mention them."}, {"scene": "skills", "label": "Skills", "i": 0, "text": "Skills watch the prompt."}, {"scene": "skills", "label": "Skills", "i": 1, "text": "Claude always sees each skill's one line description, and loads the full skill only when my request matches."}, {"scene": "skills", "label": "Skills", "i": 2, "text": "Say, draft a blog post, and the content-writer skill loads."}, {"scene": "skills", "label": "Skills", "i": 3, "text": "Ask what a WordPress function returns, and doc-references loads, then fetches the handbook page."}, {"scene": "skills", "label": "Skills", "i": 4, "text": "Six skills so far. Doc references, content-writer, growth-design, portfolio-seo, geo-blog-post, and sage-architecture.", "intent": "a list: vary pitch per item"}, {"scene": "commands", "label": "Commands & hook", "i": 0, "text": "Commands wait for me."}, {"scene": "commands", "label": "Commands & hook", "i": 1, "text": "/pb:fix, /pb:review, /pb:ship. Nothing runs until I type the slash."}, {"scene": "commands", "label": "Commands & hook", "i": 2, "text": "A hook runs PHPCS on every PHP file Claude edits, and sends the errors straight back."}, {"scene": "commands", "label": "Commands & hook", "i": 3, "text": "And a reviewer agent reads the diff before I open a pull request."}, {"scene": "template", "label": "Project template", "i": 0, "text": "/pb:new-project drops a kit into any theme repo."}, {"scene": "template", "label": "Project template", "i": 1, "text": "A CLAUDE.md under 2 KB. Safe permissions. A WebFetch allow list for every doc site."}, {"scene": "template", "label": "Project template", "i": 2, "text": "And a GitHub Actions deploy that swaps the theme over SSH, health checks it, and rolls back on failure."}, {"scene": "private", "label": "What stays out", "i": 0, "text": "One rule I don't break. Nothing that names a client goes in the repo.", "intent": "firm but calm"}, {"scene": "private", "label": "What stays out", "i": 1, "text": "Hosts, paths, logins, and product data stay in each project's own CLAUDE.md."}, {"scene": "private", "label": "What stays out", "i": 2, "text": "CI scans every file for tokens and private keys, and fails the build if one shows up."}, {"scene": "outro", "label": "Next step", "i": 0, "text": "If you use Claude Code on more than one repo, build one of these. Start with five lines.", "intent": "inviting"}, {"scene": "outro", "label": "Next step", "i": 1, "text": "The full write up, and the repo, are at matthummel.com."}, {"scene": "outro", "label": "Next step", "i": 2, "text": "If you want help setting this up for your team, you'll find me there too.", "intent": "last line: don't cut it short"}], "tiktok": [{"scene": "hook", "label": "Hook", "i": 0, "text": "I stopped re-typing my Claude Code prompts. Here's how.", "intent": "smile"}, {"scene": "s1", "label": "01", "i": 0, "text": "One. Put every rule in a public GitHub repo."}, {"scene": "s2", "label": "02", "i": 0, "text": "Two. Keep one core rule always on. Under 1 KB."}, {"scene": "s3", "label": "03", "i": 0, "text": "Three. The rest load by file path. Open a PHP file, the WordPress rules show up."}, {"scene": "s4", "label": "04", "i": 0, "text": "Four. Skills load from the prompt. Say blog post, the writing skill loads."}, {"scene": "s5", "label": "05", "i": 0, "text": "Five. A session start hook pulls main, so every machine updates itself."}, {"scene": "safety", "label": "Keep out", "i": 0, "text": "Never put client hosts or logins in it. CI blocks them.", "intent": "firm"}, {"scene": "cta", "label": "CTA", "i": 0, "text": "Repo and write up at matthummel.com. Follow for more.", "intent": "warm, land it"}]};
+
+const PRESETS = {soft: {wpm: 148, tol: 20, st: 2.0, pause: 0.35, count: 3, auto: 1, mark: 1}, tutorial: {wpm: 155, tol: 20, st: 2.0, pause: 0.35, count: 1, auto: 1, mark: 1}, short: {wpm: 170, tol: 25, st: 2.5, pause: 0.3, count: 1, auto: 1, mark: 1}};
+const $ = id => document.getElementById(id);
+let SCRIPT = {name: 'playbook', cuts: BUILTIN}, mode = 'youtube', idx = 0, takes = {}, S = {...PRESETS.soft, preset: 'soft'};
+let stream = null, rec = null, chunks = [], t0 = 0, raf = 0, ac = null, an = null, player = null, pitchBuf = [], liveWords = 0, roomFloor = null;
+const K = () => `${SCRIPT.name}:${mode}:${idx}`;
+const L = () => SCRIPT.cuts[mode];
+
+/* ============ storage (best effort) ============ */
+let dbp = null;
+function idb(){ if (dbp) return dbp; dbp = new Promise(res => { try { const r = indexedDB.open('vo-booth', 2); r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains('takes')) d.createObjectStore('takes'); if (!d.objectStoreNames.contains('scripts')) d.createObjectStore('scripts'); }; r.onsuccess = () => res(r.result); r.onerror = () => res(null); } catch { res(null); } }); return dbp; }
+async function put(store, key, val){ try { const db = await idb(); if (!db) return; db.transaction(store, 'readwrite').objectStore(store).put(val, key); } catch {} }
+async function del(store, key){ try { const db = await idb(); if (!db) return; db.transaction(store, 'readwrite').objectStore(store).delete(key); } catch {} }
+async function all(store){ try { const db = await idb(); if (!db) return {}; const st = db.transaction(store).objectStore(store); const keys = await new Promise(r => { const q = st.getAllKeys(); q.onsuccess = () => r(q.result); q.onerror = () => r([]); }); const out = {}; for (const k of keys) out[k] = await new Promise(r => { const q = st.get(k); q.onsuccess = () => r(q.result); q.onerror = () => r(null); }); return out; } catch { return {}; } }
+function loadSettings(){ try { const s = JSON.parse(localStorage.getItem('vo-settings') || 'null'); if (s) S = {...S, ...s}; } catch {} }
+function saveSettings(){ try { localStorage.setItem('vo-settings', JSON.stringify(S)); } catch {} }
+
+/* ============ script marking ============ */
+const STOP = new Set('a an the and or but so of to in on at by for with from into as is are was were be been it its this that these those i my me we our you your they them their he she his her then than there here now just also only very every each one two'.split(' '));
+function mark(text){
+  if (!+S.mark) return esc(text).replace(/(\/pb:[\w-]+|~\/\.claude|[\w.-]+\.(sh|md|php)|CLAUDE\.md|WebFetch|PHPCS)/g, '<code>$1</code>');
+  // split into sentences; underline 1-2 operative words per sentence (longest non-stop words, prefer later position); mark commas as short pauses, periods as settle
+  const sents = text.match(/[^.!?]+[.!?]*/g) || [text];
+  return sents.map(s => {
+    const toks = s.trim().split(' ');
+    const words = toks.map(t => t.replace(/[^\w'\/:.~-]/g, ''));
+    const cands = words.map((w, i) => ({w, i, score: (STOP.has(w.toLowerCase()) ? 0 : w.length) + i * 0.15 + (/[A-Z0-9\/]/.test(w) ? 2 : 0)})).sort((a, b) => b.score - a.score);
+    const picks = new Set(cands.slice(0, words.length > 7 ? 2 : 1).map(c => c.i));
+    const html = toks.map((t, wi) => {
+      let core = esc(t).replace(/(\/pb:[\w-]+|~\/\.claude|[\w.-]+\.(sh|md|php)|CLAUDE\.md|WebFetch|PHPCS)/g, '<code>$1</code>');
+      if (picks.has(wi)) core = `<span class="op">${core}</span>`;
+      if (/,$/.test(t)) core += '<span class="p">/</span>';
+      return core;
+    }).join(' ');
+    const end = /[.!?]$/.test(s.trim()) ? ' <span class="fall" title="let it settle">↘</span>' : '';
+    return html + end;
+  }).join(' <span class="p">//</span> ');
+}
+function esc(s){ return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function coachFor(line, i){
+  const words = line.text.split(' ').length; const tips = [];
+  if (line.intent) tips.push(`<b>Intention:</b> ${esc(line.intent)}.`);
+  if (words <= 6) tips.push('<b>Short line.</b> Slower than the long ones, then a beat.');
+  if (/[:]/.test(line.text) || /,.*,.*,/.test(line.text)) tips.push('<b>List.</b> Give each item its own pitch; don\'t fall on every comma.');
+  if (/\?$/.test(line.text)) tips.push('<b>Question.</b> Lift at the end.');
+  if (i === L().length - 1) tips.push('<b>Last line.</b> Don\'t cut it short; let it land.');
+  if (i === 0) tips.push('<b>Hook.</b> Smile. The listener hears it.');
+  if (!tips.length) tips.push('Underlined word gets the lift. Let the ending settle.');
+  return tips.join(' ');
+}
+
+/* ============ render ============ */
+function render(){
+  const lines = L(), cur = lines[idx];
+  const tabs = $('tabs'); tabs.innerHTML = '';
+  for (const m of Object.keys(SCRIPT.cuts)) { const b = document.createElement('button'); b.role = 'tab'; b.setAttribute('aria-selected', m === mode); b.textContent = `${m} · ${SCRIPT.cuts[m].length} lines`; b.onclick = () => { if (!rec) { mode = m; idx = 0; render(); } }; tabs.appendChild(b); }
+  $('title').textContent = `Voiceover Booth · ${SCRIPT.name}`;
+  $('sceneLabel').textContent = `${cur.label} · line ${idx+1} of ${lines.length}`;
+  $('intent').textContent = cur.intent ? cur.intent : '';
+  $('prev').textContent = idx > 0 ? lines[idx-1].text : '';
+  $('line').innerHTML = '<div>' + mark(cur.text) + '</div>';
+  $('next').textContent = idx < lines.length-1 ? 'Next: ' + lines[idx+1].text : 'Last line.';
+  $('coach').innerHTML = coachFor(cur, idx);
+  const has = !!takes[K()];
+  $('playBtn').disabled = !has; $('retakeBtn').disabled = !has; $('keepBtn').disabled = !has;
+  $('prevBtn').disabled = idx === 0; $('nextBtn').disabled = idx === lines.length-1;
+  $('recBtn').innerHTML = has ? '● Re-record<kbd>space</kbd>' : '● Record<kbd>space</kbd>';
+  const n = lines.filter((_, i) => takes[`${SCRIPT.name}:${mode}:${i}`]).length;
+  $('count2').textContent = `${n} of ${lines.length} recorded`; $('bar').style.width = (n / lines.length * 100) + '%';
+  const total = Object.keys(takes).filter(k => k.startsWith(SCRIPT.name + ':')).length;
+  $('exportBtn').disabled = total === 0; $('exportBtn').textContent = total ? `Download ${total} take${total===1?'':'s'} (.zip)` : 'Download all takes (.zip)';
+  // gauges
+  const expected = cur.text.split(' ').length / S.wpm * 60; $('lenV').textContent = `~${expected.toFixed(1)}s`;
+  $('paceBand').style.left = pct(S.wpm - S.tol) + '%'; $('paceBand').style.width = (pct(S.wpm + S.tol) - pct(S.wpm - S.tol)) + '%';
+  $('lenPin').style.left = 'calc(100% - 4px)'; $('lenFill').style.width = '0%'; $('lenFill').classList.remove('over'); $('paceV').textContent = '—'; $('pitchV').textContent = '—';
+  drawPitch([]);
+  // list
+  const list = $('list'); list.innerHTML = ''; let lastScene = null;
+  lines.forEach((l, i) => {
+    if (l.scene !== lastScene) { const h = document.createElement('div'); h.className = 'scene'; h.textContent = l.label; list.appendChild(h); lastScene = l.scene; }
+    const tk = takes[`${SCRIPT.name}:${mode}:${i}`];
+    const b = document.createElement('button'); b.className = 'row' + (tk ? (tk.score && tk.score.verdict === 'retake' ? ' flag' : ' done') : ''); b.setAttribute('aria-current', i === idx);
+    b.innerHTML = `<span class="s"></span><span class="n">${i+1}</span><span class="t"></span>`; b.querySelector('.t').textContent = l.text;
+    b.onclick = () => { if (!rec) { idx = i; render(); showScore(takes[K()]); } }; list.appendChild(b);
+    if (i === idx) requestAnimationFrame(() => b.scrollIntoView({block: 'nearest'}));
+  });
+  // settings
+  $('s_wpm').value = S.wpm; $('s_tol').value = S.tol; $('s_st').value = S.st; $('s_pause').value = S.pause; $('s_count').value = S.count; $('s_auto').value = S.auto; $('s_mark').value = S.mark;
+  for (const b of $('presets').querySelectorAll('button')) b.setAttribute('aria-pressed', b.dataset.p === S.preset);
+  $('room').textContent = roomFloor == null ? 'not measured' : `${roomFloor.toFixed(0)} dB floor`;
+}
+const pct = w => Math.max(0, Math.min(100, (w - 80) / (240 - 80) * 100));
+
+/* ============ audio ============ */
+async function getMic(){
+  if (stream) return stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1}});
+    ac = new (window.AudioContext || window.webkitAudioContext)(); an = ac.createAnalyser(); an.fftSize = 2048; ac.createMediaStreamSource(stream).connect(an);
+    return stream;
+  } catch (e) { $('state').innerHTML = '<span class="bad">Microphone blocked. Allow the mic for this page and try again.</span>'; return null; }
+}
+function f0(buf, sr){ // autocorrelation pitch, 65–400 Hz; null if unvoiced
+  let s = 0; for (const v of buf) s += v*v; const rms = Math.sqrt(s / buf.length); if (rms < 0.012) return null;
+  const minL = Math.floor(sr / 400), maxL = Math.floor(sr / 65); let best = 0, bl = -1;
+  for (let lag = minL; lag <= maxL; lag++) { let c = 0; for (let i = 0; i < buf.length - lag; i++) c += buf[i] * buf[i + lag]; c /= (buf.length - lag); if (c > best) { best = c; bl = lag; } }
+  if (bl < 0 || best / (rms * rms) < 0.45) return null; return sr / bl;
+}
+function drawPitch(arr){
+  const c = $('pitchC'), g = c.getContext('2d'); g.clearRect(0, 0, c.width, c.height);
+  const vals = arr.filter(v => v); if (!vals.length) return;
+  const lo = 60, hi = 320; g.strokeStyle = '#22d3ee'; g.lineWidth = 2; g.beginPath(); let pen = false;
+  arr.forEach((v, i) => { const x = i / Math.max(1, arr.length - 1) * c.width; if (!v) { pen = false; return; } const y = c.height - (Math.log2(v / lo) / Math.log2(hi / lo)) * c.height; pen ? g.lineTo(x, y) : g.moveTo(x, y); pen = true; }); g.stroke();
+}
+function liveLoop(){
+  if (!an) return;
+  const buf = new Float32Array(an.fftSize); an.getFloatTimeDomainData(buf);
+  let s = 0; for (const v of buf) s += v*v; const rms = Math.sqrt(s / buf.length);
+  $('meter').style.width = Math.min(100, rms * 420) + '%';
+  if (rec) {
+    const el = (performance.now() - t0) / 1000; $('time').textContent = el.toFixed(1) + 's';
+    const cur = L()[idx], words = cur.text.split(' ').length, expected = words / S.wpm * 60;
+    const p = Math.min(1.4, el / expected); $('lenFill').style.width = Math.min(100, p * 100) + '%'; $('lenFill').classList.toggle('over', el > expected * 1.25);
+    // estimated live pace: assume words spoken proportional to elapsed voiced time
+    if (rms > 0.012) liveWords += 1;
+    pitchBuf.push(f0(buf, ac.sampleRate)); if (pitchBuf.length > 220) pitchBuf.shift(); drawPitch(pitchBuf);
+  }
+  raf = requestAnimationFrame(liveLoop);
+}
+async function startRec(){
+  const s = await getMic(); if (!s) return;
+  if (ac.state === 'suspended') await ac.resume();
+  if (+S.count > 0) { await countdown(+S.count); }
+  chunks = []; pitchBuf = []; liveWords = 0;
+  const mime = ['audio/webm;codecs=opus','audio/webm','audio/mp4'].find(m => MediaRecorder.isTypeSupported(m)) || '';
+  rec = new MediaRecorder(s, mime ? {mimeType: mime, audioBitsPerSecond: 128000} : undefined);
+  rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = async () => {
+    const blob = new Blob(chunks, {type: rec.mimeType}); const dur = (performance.now() - t0) / 1000; rec = null;
+    $('prompter').classList.remove('live'); $('recBtn').innerHTML = '● Re-record<kbd>space</kbd>'; $('state').textContent = 'Analyzing…';
+    const score = await analyze(blob, L()[idx]);
+    takes[K()] = {blob, dur, score}; await put('takes', K(), takes[K()]);
+    showScore(takes[K()]);
+    $('state').textContent = score.verdict === 'keep' ? `Good take (${dur.toFixed(1)}s). Enter to keep and move on, R to retake.` : `Saved (${dur.toFixed(1)}s). Worth a retake: ${score.why}. R to retake, Enter to keep anyway.`;
+    if (+S.auto && score.verdict === 'keep' && idx < L().length - 1) idx++;
+    render(); if (!(+S.auto && score.verdict === 'keep')) showScore(takes[K()]); else showScore(takes[`${SCRIPT.name}:${mode}:${idx-1}`]);
+  };
+  t0 = performance.now(); rec.start(100); $('prompter').classList.add('live'); $('state').textContent = 'Recording. Space when you finish the line.'; $('recBtn').innerHTML = '■ Stop<kbd>space</kbd>';
+  if (!raf) liveLoop();
+}
+function countdown(n){ return new Promise(res => { const c = $('count'); c.hidden = false; let k = n; const tick = () => { c.firstChild.textContent = k; if (k === 0) { c.hidden = true; res(); return; } k--; setTimeout(tick, 1000); }; tick(); }); }
+function stopRec(){ if (rec && rec.state !== 'inactive') rec.stop(); }
+function playTake(){ const t = takes[K()]; if (!t) return; if (player) { player.pause(); URL.revokeObjectURL(player.src); } player = new Audio(URL.createObjectURL(t.blob)); player.play().catch(() => {}); }
+function retake(){ delete takes[K()]; del('takes', K()); render(); startRec(); }
+
+/* ============ take analysis ============ */
+async function analyze(blob, line){
+  const ab = await blob.arrayBuffer(); const actx = new OfflineAudioContext(1, 1, 24000); let buf;
+  try { buf = await actx.decodeAudioData(ab); } catch { return {verdict: 'keep', why: '', wpm: 0, st: 0, hes: 0, lvl: 0}; }
+  const a = buf.getChannelData(0), sr = buf.sampleRate, win = Math.floor(sr * 0.02);
+  const n = Math.floor(a.length / win); const db = new Float32Array(n);
+  for (let i = 0; i < n; i++) { let s = 0; for (let j = 0; j < win; j++) { const v = a[i*win+j]; s += v*v; } db[i] = 20 * Math.log10(Math.sqrt(s / win) + 1e-9); }
+  const on = []; for (let i = 0; i < n; i++) if (db[i] > -40) on.push(i);
+  if (!on.length) return {verdict: 'retake', why: 'nothing heard', wpm: 0, st: 0, hes: 0, lvl: -60};
+  const voiced = (on[on.length-1] - on[0] + 1) * win / sr; const words = line.text.split(' ').length; const wpm = words / voiced * 60;
+  // hesitations: quiet runs > S.pause inside the voiced span
+  let hes = 0, run = 0; for (let i = on[0]; i <= on[on.length-1]; i++) { if (db[i] <= -40) run++; else { if (run * win / sr > S.pause) hes++; run = 0; } }
+  // pitch in semitones sd
+  const f = []; const step = 1024; for (let i = 0; i + 2048 < a.length; i += step) { const v = f0(a.subarray(i, i + 2048), sr); if (v) f.push(v); }
+  let st = 0; if (f.length > 4) { const med = f.slice().sort((x, y) => x - y)[Math.floor(f.length / 2)]; const semis = f.map(v => 12 * Math.log2(v / med)); const m = semis.reduce((x, y) => x + y, 0) / semis.length; st = Math.sqrt(semis.reduce((x, y) => x + (y - m) ** 2, 0) / semis.length); }
+  let lvl = 0; for (const i of on) lvl += db[i]; lvl /= on.length; const peak = Math.max(...Array.from(a, Math.abs));
+  const why = [];
+  if (wpm > S.wpm + S.tol) why.push(`rushed (${wpm.toFixed(0)} wpm)`); if (wpm < S.wpm - S.tol - 15) why.push(`slow (${wpm.toFixed(0)} wpm)`);
+  if (st && st < S.st) why.push(`flat (${st.toFixed(1)} st)`); if (hes) why.push(`${hes} hesitation${hes > 1 ? 's' : ''}`);
+  if (peak > 0.98) why.push('clipping'); if (lvl < -34) why.push('too quiet, move closer');
+  return {verdict: why.length ? 'retake' : 'keep', why: why.join(', '), wpm, st, hes, lvl, peak, f};
+}
+function showScore(t){
+  const box = $('scoreBox'); if (!t || !t.score) { box.innerHTML = '<div class="note">Record a line to see its score.</div>'; return; }
+  const s = t.score; const cls = (ok, warn) => ok ? 'ok' : (warn ? 'warn' : 'bad');
+  const paceOk = Math.abs(s.wpm - S.wpm) <= S.tol, stOk = s.st >= S.st, hesOk = s.hes === 0, lvlOk = s.lvl > -34 && !(s.peak > 0.98);
+  box.innerHTML = `<div class="verdict ${s.verdict === 'keep' ? '' : 'retake'}">${s.verdict === 'keep' ? 'Keep it' : 'Retake suggested'}${s.why ? ' · ' + esc(s.why) : ''}</div>
+  <div class="score">
+    <span class="k">Pace</span><span class="bar"><i style="width:${pct(s.wpm)}%;background:var(--${paceOk ? 'lime' : 'amber'})"></i></span><span class="v ${cls(paceOk, true)}">${s.wpm.toFixed(0)} wpm</span>
+    <span class="k">Melody</span><span class="bar"><i style="width:${Math.min(100, s.st / 6 * 100)}%;background:var(--${stOk ? 'lime' : 'amber'})"></i></span><span class="v ${cls(stOk, true)}">${s.st.toFixed(1)} st</span>
+    <span class="k">Hesitations</span><span class="bar"><i style="width:${Math.min(100, s.hes * 34)}%;background:var(--${hesOk ? 'lime' : 'amber'})"></i></span><span class="v ${cls(hesOk, true)}">${s.hes}</span>
+    <span class="k">Level</span><span class="bar"><i style="width:${Math.max(0, Math.min(100, (s.lvl + 50) * 2.5))}%;background:var(--${lvlOk ? 'lime' : 'amber'})"></i></span><span class="v ${cls(lvlOk, true)}">${s.lvl.toFixed(0)} dB${s.peak > 0.98 ? ' · clip' : ''}</span>
+  </div>`;
+  if (s.f && s.f.length) drawPitch(s.f.slice(-220)); $('paceV').textContent = s.wpm.toFixed(0) + ' wpm'; $('pacePin').style.left = `calc(${pct(s.wpm)}% - 2px)`; $('pitchV').textContent = s.st.toFixed(1) + ' st';
+}
+
+/* ============ export ============ */
+async function exportZip(){
+  const btn = $('exportBtn'); btn.disabled = true; btn.textContent = 'Packing…';
+  try {
+    const zip = new JSZip(); const manifest = {version: 2, script: SCRIPT.name, created: new Date().toISOString(), settings: S, cuts: {}};
+    for (const m of Object.keys(SCRIPT.cuts)) {
+      const lines = SCRIPT.cuts[m]; manifest.cuts[m] = [];
+      for (let i = 0; i < lines.length; i++) { const t = takes[`${SCRIPT.name}:${m}:${i}`]; if (!t) continue; const ext = t.blob.type.includes('mp4') ? 'm4a' : 'webm'; const name = `${m}/${String(i).padStart(2,'0')}.${ext}`; zip.file(name, t.blob); manifest.cuts[m].push({index: i, scene: lines[i].scene, cue: lines[i].i, text: lines[i].text, file: name, seconds: +t.dur.toFixed(3), score: t.score ? {wpm: +t.score.wpm.toFixed(0), st: +t.score.st.toFixed(2), hes: t.score.hes, verdict: t.score.verdict} : null}); }
+    }
+    zip.file('manifest.json', JSON.stringify(manifest, null, 1));
+    const blob = await zip.generateAsync({type: 'blob'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${SCRIPT.name}-voiceover.zip`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    $('exportNote').textContent = `Saved ${SCRIPT.name}-voiceover.zip to your Downloads. Attach it in the chat.`;
+  } catch (e) { $('exportNote').innerHTML = `<span class="bad">Couldn't save (${esc(String(e && e.message || e))}). Your takes are still here.</span>`; }
+  finally { render(); }
+}
+
+/* ============ script loading ============ */
+function parseScript(text){
+  text = text.trim(); if (!text) return null;
+  if (text.startsWith('{')) { // pipeline script.json
+    const j = JSON.parse(text); const cuts = {}; const disp = j.display || {};
+    const d = s => { for (const k of Object.keys(disp).sort((a, b) => b.length - a.length)) s = s.split(k).join(disp[k]); return s; };
+    for (const m of Object.keys(j)) { if (!Array.isArray(j[m])) continue; cuts[m] = []; for (const sc of j[m]) sc.say.forEach((l, i) => cuts[m].push({scene: sc.id, label: sc.label || sc.id, i, text: d(l)})); }
+    return cuts;
+  }
+  const lines = []; let scene = 'main', label = 'Main', i = 0;
+  for (let raw of text.split('\n')) { raw = raw.trim(); if (!raw) continue; if (raw.startsWith('##')) { label = raw.replace(/^#+\s*/, ''); scene = label.toLowerCase().replace(/[^a-z0-9]+/g, '-'); i = 0; continue; } const m = raw.match(/\[([^\]]+)\]\s*$/); const intent = m ? m[1] : undefined; lines.push({scene, label, i: i++, text: raw.replace(/\s*\[[^\]]+\]\s*$/, ''), intent}); }
+  return {main: lines};
+}
+async function loadScript(name, cuts){ SCRIPT = {name, cuts}; mode = Object.keys(cuts)[0]; idx = 0; await put('scripts', name, {name, cuts, saved: Date.now()}); try { localStorage.setItem('vo-last', name); } catch {} render(); }
+
+/* ============ wiring ============ */
+$('recBtn').onclick = () => rec ? stopRec() : startRec();
+$('playBtn').onclick = playTake; $('retakeBtn').onclick = retake;
+$('keepBtn').onclick = () => { if (!rec && idx < L().length-1) { idx++; render(); } };
+$('prevBtn').onclick = () => { if (!rec && idx > 0) { idx--; render(); showScore(takes[K()]); } };
+$('nextBtn').onclick = () => { if (!rec && idx < L().length-1) { idx++; render(); showScore(takes[K()]); } };
+$('exportBtn').onclick = exportZip;
+$('flagBtn').onclick = () => { const lines = L(); for (let k = 1; k <= lines.length; k++) { const j = (idx + k) % lines.length; const t = takes[`${SCRIPT.name}:${mode}:${j}`]; if (!t || (t.score && t.score.verdict === 'retake')) { idx = j; render(); showScore(t); return; } } };
+for (const id of ['s_wpm','s_tol','s_st','s_pause','s_count','s_auto','s_mark']) $(id).onchange = () => { S[id.slice(2)] = +$(id).value; S.preset = ''; saveSettings(); render(); };
+$('presets').onclick = e => { const b = e.target.closest('button'); if (!b) return; S = {...S, ...PRESETS[b.dataset.p], preset: b.dataset.p}; saveSettings(); render(); };
+$('resetBtn').onclick = () => { S = {...PRESETS.soft, preset: 'soft'}; saveSettings(); render(); };
+$('warmupBtn').onclick = () => $('warmup').showModal(); $('warmDone').onclick = () => $('warmup').close();
+$('roomBtn').onclick = async () => { const s = await getMic(); if (!s) { $('roomOut').textContent = 'mic blocked'; return; } $('roomOut').textContent = 'quiet for 3 s…'; const vals = []; const tEnd = performance.now() + 3000; await new Promise(res => { const tick = () => { const b = new Float32Array(an.fftSize); an.getFloatTimeDomainData(b); let q = 0; for (const v of b) q += v*v; vals.push(20 * Math.log10(Math.sqrt(q / b.length) + 1e-9)); performance.now() < tEnd ? requestAnimationFrame(tick) : res(); }; tick(); }); vals.sort((a, b) => a - b); roomFloor = vals[Math.floor(vals.length * 0.5)]; $('roomOut').innerHTML = `floor ${roomFloor.toFixed(0)} dB · <span class="${roomFloor < -55 ? 'ok' : roomFloor < -45 ? 'warn' : 'bad'}">${roomFloor < -55 ? 'quiet, good' : roomFloor < -45 ? 'okay, closer helps' : 'noisy: fans, HVAC, or move'}</span>`; render(); };
+$('scriptBtn').onclick = async () => { const saved = await all('scripts'); const names = Object.keys(saved); $('savedScripts').innerHTML = names.length ? 'Saved here: ' + names.map(n => `<button class="b-ghost" data-n="${esc(n)}" style="padding:.1em .6em;font-size:12px">${esc(n)}</button>`).join(' ') : ''; $('savedScripts').onclick = e => { const b = e.target.closest('button'); if (b) { loadScript(b.dataset.n, saved[b.dataset.n].cuts); $('scriptDlg').close(); } }; $('scriptDlg').showModal(); };
+$('scriptCancel').onclick = () => $('scriptDlg').close();
+$('scriptLoad').onclick = async () => { try { const cuts = parseScript($('scriptText').value); if (!cuts) return; const name = ($('scriptName').value.trim() || 'script-' + new Date().toISOString().slice(0, 10)).replace(/[^\w.-]+/g, '-'); await loadScript(name, cuts); $('scriptDlg').close(); } catch (e) { $('savedScripts').innerHTML = `<span class="bad">Couldn't parse that: ${esc(String(e.message || e))}</span>`; } };
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || document.querySelector('dialog[open]')) return;
+  if (e.code === 'Space') { e.preventDefault(); rec ? stopRec() : startRec(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); $('nextBtn').click(); }
+  else if (e.key === 'Enter') { e.preventDefault(); $('keepBtn').disabled ? $('nextBtn').click() : $('keepBtn').click(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); $('prevBtn').click(); }
+  else if (e.key === 'r' || e.key === 'R') { if (takes[K()] && !rec) retake(); }
+  else if (e.key === 'p' || e.key === 'P') { playTake(); }
+});
+(async () => {
+  loadSettings();
+  const saved = await all('scripts'); let last = null; try { last = localStorage.getItem('vo-last'); } catch {}
+  if (last && saved[last]) SCRIPT = {name: last, cuts: saved[last].cuts}; else await put('scripts', 'playbook', {name: 'playbook', cuts: BUILTIN, saved: Date.now()});
+  mode = Object.keys(SCRIPT.cuts)[0];
+  takes = await all('takes'); render();
+  try { await navigator.wakeLock?.request('screen'); } catch {}
+})();
+</script>
+</body>
+</html>

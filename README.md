@@ -66,6 +66,7 @@ flowchart LR
 | 📖 **Guides** `playbook/` | Automated ship workflow · Token discipline · Rules architecture | Read by humans |
 | 🛠 **Scripts** `scripts/` | `install.sh` · `sync.sh` · `new-project.sh` · `validate.py` · `build-docs.py` | Run by you / CI |
 | 🌐 **Docs site** `docs/` | Generated from the live rules, skills, commands and agents → [matthummel-pa.github.io/ai-dev-standards-playbook](https://matthummel-pa.github.io/ai-dev-standards-playbook/) | On every merge |
+| 🎙 **Voiceover Booth** `docs/booth/` | Teleprompter + coach for recording narration line by line: live pace and melody meters, script marking, countdown, take scoring, zip export → [/booth/](https://matthummel-pa.github.io/ai-dev-standards-playbook/booth/) | Open in Chrome |
 
 <details>
 <summary><strong>🧠 Skills at a glance</strong></summary>
@@ -206,6 +207,7 @@ Full history in [`CHANGELOG.md`](CHANGELOG.md).
 
 | Version | Highlights |
 | --- | --- |
+| **1.3.0** | Voiceover Booth: a hosted teleprompter/coach for recording narration, with pro voice-over rules built in. |
 | **1.2.1** | README redesign: banner, badges, section nav, mermaid diagrams, collapsible reference tables, footer. |
 | **1.2.0** | GitHub Pages docs site generated from the live rules, skills, commands and agents (`scripts/build-docs.py`). |
 | **1.1.0** | `doc-references` skill (canonical docs for the whole stack + verify-before-coding rule); `WebFetch` allowlist in the project `settings.json`. |

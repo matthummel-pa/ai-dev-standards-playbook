@@ -2,6 +2,12 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.3.0] - 2026-10-15
+
+### Added
+- `docs/booth/`: Voiceover Booth, a static page served on the docs site. Teleprompter with auto-marked operative words and pause marks, intention per line, 3-2-1 countdown, live pace / line-length / melody meters, per-take scoring (pace, pitch range, hesitations, level, clipping) with keep/retake verdicts, warm-up checklist and room-tone check, expert presets, script loader (plain text or the pipeline's `script.json`), takes saved in the browser, zip export for `ingest.py`.
+- `playbook/voiceover-rules.md`: professional voice-over rules and the post chain used on Matt's takes.
+
 ## [1.2.1] - 2026-10-14
 
 ### Changed

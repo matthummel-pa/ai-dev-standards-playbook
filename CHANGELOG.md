@@ -2,6 +2,14 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.2.0] - 2026-10-14
+
+### Added
+- `docs/`: GitHub Pages site with a card for every rule, skill, command, agent, hook and template file, plus diagrams of the auto-update flow, what loads when, and the ship workflow. Deployed by `.github/workflows/pages.yml` on every push to `main` that touches `docs/`.
+
+### Changed
+- `README.md`: rewritten for scanning — why it exists, what's inside (tables for skills and commands), install, auto-update, what loads when, what's new, and a link to the docs site.
+
 ## [1.1.0] - 2026-10-14
 
 ### Added

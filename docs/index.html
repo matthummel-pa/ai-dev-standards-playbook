@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Dev Standards &amp; Playbook — Docs</title>
+<meta name="description" content="How the ai-dev-standards-playbook repo teaches Claude Code: rules, skills, commands, agents, hooks and the project template, with diagrams of what loads when.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #ffffff; --bg-2: #f6f7f9; --fg: #1b1f24; --muted: #57606a; --line: #d9dee3;
+    --accent: #0a66c2; --accent-2: #0f766e; --warn: #b45309; --code-bg: #eef1f4;
+    --rule: #0a66c2; --skill: #0f766e; --cmd: #7c3aed; --agent: #b45309; --hook: #be123c; --tpl: #475569;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1116; --bg-2: #161b22; --fg: #e6edf3; --muted: #9aa4b2; --line: #30363d;
+      --accent: #58a6ff; --accent-2: #2dd4bf; --warn: #f59e0b; --code-bg: #1f252d;
+      --rule: #58a6ff; --skill: #2dd4bf; --cmd: #c4b5fd; --agent: #fbbf24; --hook: #fb7185; --tpl: #94a3b8;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+  code { background: var(--code-bg); padding: .1em .35em; border-radius: 4px; }
+  pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  header.hero { padding: 3rem 0 2rem; border-bottom: 1px solid var(--line); }
+  header.hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 .5rem; line-height: 1.15; }
+  header.hero p.lede { font-size: 1.15rem; color: var(--muted); max-width: 60ch; margin: 0 0 1rem; }
+  .pill { display: inline-block; font-size: .85rem; padding: .2em .7em; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); margin-right: .5rem; }
+  nav.toc { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--line); z-index: 2; }
+  nav.toc ul { list-style: none; margin: 0; padding: .5rem 0; display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
+  nav.toc a { text-decoration: none; color: var(--fg); font-size: .95rem; }
+  nav.toc a:hover, nav.toc a:focus-visible { text-decoration: underline; }
+  section { padding: 2.5rem 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 1.6rem; margin: 0 0 .5rem; }
+  h3 { font-size: 1.15rem; margin: 1.5rem 0 .5rem; }
+  p.sub { color: var(--muted); margin-top: 0; max-width: 70ch; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.1rem; background: var(--bg-2); border-top: 4px solid var(--tpl); }
+  .card h4 { margin: 0 0 .35rem; font-size: 1.05rem; }
+  .card p { margin: .25rem 0; }
+  .card .when { color: var(--muted); font-size: .9rem; }
+  .card .loads { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-top: .6rem; }
+  .card.rule { border-top-color: var(--rule); } .card.skill { border-top-color: var(--skill); }
+  .card.cmd { border-top-color: var(--cmd); } .card.agent { border-top-color: var(--agent); }
+  .card.hook { border-top-color: var(--hook); } .card.tpl { border-top-color: var(--tpl); }
+  figure { margin: 1.5rem 0; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { color: var(--muted); font-size: .9rem; margin-top: .5rem; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .95rem; }
+  th, td { text-align: left; padding: .55rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--bg-2); }
+  .legend { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; font-size: .9rem; color: var(--muted); margin: .5rem 0 0; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: .4em; vertical-align: -1px; background: var(--tpl); }
+  .legend .r::before { background: var(--rule); } .legend .s::before { background: var(--skill); }
+  .legend .c::before { background: var(--cmd); } .legend .a::before { background: var(--agent); }
+  .legend .h::before { background: var(--hook); }
+  footer { padding: 2rem 0 3rem; color: var(--muted); font-size: .9rem; }
+  .skip { position: absolute; left: -999px; } .skip:focus { left: 16px; top: 8px; background: var(--bg); padding: .5rem; z-index: 9; }
+  /* SVG text uses CSS vars so it follows the theme */
+  svg text { fill: var(--fg); font-family: system-ui, sans-serif; }
+  svg .muted { fill: var(--muted); }
+  svg .box { fill: var(--bg-2); stroke: var(--line); stroke-width: 1.5; }
+  svg .arrow { stroke: var(--muted); stroke-width: 1.5; fill: none; marker-end: url(#m); }
+  svg .r { stroke: var(--rule); } svg .s { stroke: var(--skill); } svg .c { stroke: var(--cmd); }
+  svg .a { stroke: var(--agent); } svg .h { stroke: var(--hook); } svg .t { stroke: var(--tpl); }
+  svg .bar { stroke-width: 4; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="pill">ai-dev-standards-playbook</span><span class="pill" id="ver">v1.2.0</span>
+    <h1>⚡ AI Dev Standards &amp; Playbook</h1>
+    <p class="lede">One repo that teaches Claude Code how to build WordPress and front-end projects — rules, skills, commands, a reviewer agent and a deploy kit — and keeps every machine in sync.</p>
+    <p><a href="https://github.com/matthummel-pa/ai-dev-standards-playbook">GitHub repo</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/blob/main/CHANGELOG.md">Changelog</a> · by <a href="https://matthummel.com">Matt Hummel</a></p>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <div class="wrap"><ul>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#loads">What loads when</a></li>
+    <li><a href="#rules">Rules</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#commands">Commands</a></li>
+    <li><a href="#agents">Agent &amp; hook</a></li>
+    <li><a href="#template">Project template</a></li>
+    <li><a href="#ship">Ship workflow</a></li>
+    <li><a href="#install">Install</a></li>
+  </ul></div>
+</nav>
+
+<main id="main">
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="sub">Merge to <code>main</code>, and every Claude Code session on every machine picks it up. No manual copying, no stale rules.</p>
+    <figure>
+      <svg viewBox="0 0 1000 220" role="img" aria-labelledby="f1t f1d">
+        <title id="f1t">Auto-update flow</title>
+        <desc id="f1d">A pull request merges to main on GitHub. On the next Claude Code session, a SessionStart hook runs sync.sh, which git-pulls and copies rules, skills, commands, agents and hooks into the user's ~/.claude folder. Claude Code then loads them.</desc>
+        <defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+        <rect class="box" x="20" y="60" width="200" height="100" rx="10"/>
+        <text x="120" y="98" text-anchor="middle" font-weight="600">GitHub: main</text>
+        <text x="120" y="124" text-anchor="middle" class="muted" font-size="14">PR merged</text>
+        <path class="arrow" d="M220,110 L300,110"/>
+        <rect class="box" x="300" y="60" width="200" height="100" rx="10"/>
+        <text x="400" y="92" text-anchor="middle" font-weight="600">SessionStart hook</text>
+        <text x="400" y="116" text-anchor="middle" class="muted" font-size="14">runs on every new session</text>
+        <text x="400" y="138" text-anchor="middle" class="muted" font-size="14">→ scripts/sync.sh</text>
+        <path class="arrow" d="M500,110 L580,110"/>
+        <rect class="box" x="580" y="60" width="200" height="100" rx="10"/>
+        <text x="680" y="92" text-anchor="middle" font-weight="600">~/.claude</text>
+        <text x="680" y="116" text-anchor="middle" class="muted" font-size="14">rules/playbook · skills</text>
+        <text x="680" y="138" text-anchor="middle" class="muted" font-size="14">commands/pb · agents · hooks</text>
+        <path class="arrow" d="M780,110 L860,110"/>
+        <rect class="box" x="860" y="60" width="120" height="100" rx="10"/>
+        <text x="920" y="104" text-anchor="middle" font-weight="600">Claude</text>
+        <text x="920" y="126" text-anchor="middle" font-weight="600">Code</text>
+        <text x="400" y="200" text-anchor="middle" class="muted" font-size="14">git pull --ff-only · copies (not symlinks) · silent when nothing changed</text>
+      </svg>
+      <figcaption>The sync happens at session start, so a change lands in the session <em>after</em> the one that pulled it. Run <code>scripts/sync.sh</code> and restart to apply now.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="loads">
+  <div class="wrap">
+    <h2>What loads when</h2>
+    <p class="sub">Every always-on line costs tokens in every session. The playbook keeps one tiny core rule always on and loads everything else only when it's needed.</p>
+    <figure>
+      <svg viewBox="0 0 1000 300" role="img" aria-labelledby="f2t f2d">
+        <title id="f2t">Loading layers by trigger</title>
+        <desc id="f2d">Six layers from always-on to on-demand: the core rule loads every session; path rules load when a matching file is read or edited; skills load their description always and their body only when used; commands load only when typed; the project CLAUDE.md loads every session in that repo; project rules load by path in that repo.</desc>
+        <line class="t bar" x1="40" y1="40" x2="960" y2="40" stroke-linecap="round" opacity=".35"/>
+        <text x="40" y="26" font-size="13" class="muted">ALWAYS ON</text>
+        <text x="960" y="26" font-size="13" class="muted" text-anchor="end">ON DEMAND</text>
+        <!-- core -->
+        <rect class="box r" x="40" y="70" width="150" height="70" rx="8" stroke-width="2.5"/>
+        <text x="115" y="99" text-anchor="middle" font-weight="600" font-size="15">core.md</text>
+        <text x="115" y="121" text-anchor="middle" class="muted" font-size="13">every session · &lt; 1 KB</text>
+        <!-- project claude -->
+        <rect class="box t" x="40" y="160" width="150" height="70" rx="8" stroke-width="2.5"/>
+        <text x="115" y="189" text-anchor="middle" font-weight="600" font-size="15">CLAUDE.md</text>
+        <text x="115" y="211" text-anchor="middle" class="muted" font-size="13">every session in that repo</text>
+        <!-- path rules -->
+        <rect class="box r" x="240" y="70" width="190" height="70" rx="8" stroke-width="2.5"/>
+        <text x="335" y="99" text-anchor="middle" font-weight="600" font-size="15">path rules</text>
+        <text x="335" y="121" text-anchor="middle" class="muted" font-size="13">when a matching file is read</text>
+        <rect class="box t" x="240" y="160" width="190" height="70" rx="8" stroke-width="2.5"/>
+        <text x="335" y="189" text-anchor="middle" font-weight="600" font-size="15">project .claude/rules</text>
+        <text x="335" y="211" text-anchor="middle" class="muted" font-size="13">by path, private facts</text>
+        <!-- skills -->
+        <rect class="box s" x="480" y="70" width="190" height="70" rx="8" stroke-width="2.5"/>
+        <text x="575" y="99" text-anchor="middle" font-weight="600" font-size="15">skills</text>
+        <text x="575" y="121" text-anchor="middle" class="muted" font-size="13">description always, body on use</text>
+        <rect class="box h" x="480" y="160" width="190" height="70" rx="8" stroke-width="2.5"/>
+        <text x="575" y="189" text-anchor="middle" font-weight="600" font-size="15">hook</text>
+        <text x="575" y="211" text-anchor="middle" class="muted" font-size="13">after every PHP edit</text>
+        <!-- commands / agent -->
+        <rect class="box c" x="720" y="70" width="240" height="70" rx="8" stroke-width="2.5"/>
+        <text x="840" y="99" text-anchor="middle" font-weight="600" font-size="15">/pb:* commands</text>
+        <text x="840" y="121" text-anchor="middle" class="muted" font-size="13">only when you type them</text>
+        <rect class="box a" x="720" y="160" width="240" height="70" rx="8" stroke-width="2.5"/>
+        <text x="840" y="189" text-anchor="middle" font-weight="600" font-size="15">wp-reviewer agent</text>
+        <text x="840" y="211" text-anchor="middle" class="muted" font-size="13">on request or before a PR</text>
+        <text x="500" y="275" text-anchor="middle" class="muted" font-size="14">Rule of thumb: true everywhere and one line → core; about a file type → path rule; a procedure → skill; triggered on purpose → command</text>
+      </svg>
+    </figure>
+    <p class="legend"><span class="r">Rules</span><span class="s">Skills</span><span class="c">Commands</span><span class="a">Agent</span><span class="h">Hook</span><span>Project / template</span></p>
+  </div>
+</section>
+
+<section id="rules">
+  <div class="wrap">
+    <h2>Rules</h2>
+    <p class="sub">Installed to <code>~/.claude/rules/playbook/</code>. Only <code>core.md</code> is always on; the rest declare <code>paths:</code> and load when Claude reads or edits a matching file.</p>
+    <div class="grid">
+      <article class="card rule"><h4>core.md</h4><p>Answer first. Branch + small PRs. Read before editing. Sanitize, escape, nonces, capability checks. WCAG 2.1 AA. Never invent metrics. Token discipline. Verify versioned APIs via <code>doc-references</code>.</p><p class="loads">Loads: every session · must stay under 1 KB</p></article>
+      <article class="card rule"><h4>wordpress/wordpress.md</h4><p>WordPress coding standards, hooks, escaping and query rules.</p><p class="loads">Paths: <code>**/*.php</code>, <code>theme.json</code>, <code>**/block.json</code></p></article>
+      <article class="card rule"><h4>wordpress/wp-review.md</h4><p>What a senior WordPress review checks for; used by the <code>wp-reviewer</code> agent and <code>/pb:review</code>.</p><p class="loads">Paths: <code>**/*.php</code></p></article>
+      <article class="card rule"><h4>sage/sage.md</h4><p>Sage/Roots conventions: Blade templates, Composers for data, Tailwind v4 tokens, Vite.</p><p class="loads">Paths: <code>app/**</code>, <code>resources/**</code>, <code>vite.config.js</code></p></article>
+      <article class="card rule"><h4>seo/seo-ai-search.md</h4><p>AI-search / GEO standards: one intent per page, BLUF, question-style headings, JSON-LD, Core Web Vitals targets.</p><p class="loads">Paths: <code>**/*.blade.php</code>, <code>**/seo*.php</code>, <code>**/*.mdx</code></p></article>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <h2>Skills</h2>
+    <p class="sub">Installed to <code>~/.claude/skills/&lt;name&gt;/</code>. Claude sees every description at all times and loads the full body only when the task matches.</p>
+    <div class="grid">
+      <article class="card skill"><h4>doc-references</h4><p>Canonical reference docs for the whole stack and the rule for verifying against them before coding.</p><p class="when">WordPress Developer Resources · Roots / Bedrock · WP Bones environments · Tailwind · MDN · WHATWG HTML · W3C · ARIA APG · web.dev · Modern CSS · caniuse · cssdb · JavaScript.info · TypeScript · React · Next.js · Node · NestJS · Ahrefs · JS/CSS Weekly · Frontend Tools</p><p class="loads">Use: before touching a hook, class, CSS feature or browser-support question</p></article>
+      <article class="card skill"><h4>content-writer</h4><p>Editorial voice, readability and multi-pass editing for site copy, posts and emails. Adds Editor's Notes when editing someone's writing.</p><p class="loads">Use: visitor-facing text</p></article>
+      <article class="card skill"><h4>growth-design</h4><p>Growth, CRO, brand design and front-end guardrails as three personas: marketer, graphic designer, web designer.</p><p class="loads">Use: landing pages, conversion copy, design review</p></article>
+      <article class="card skill"><h4>portfolio-seo</h4><p>Portfolio and service-site SEO: dual audience, skill-first keywords, case-study layout, strict on-page limits.</p><p class="loads">Use: portfolio, service or project pages</p></article>
+      <article class="card skill"><h4>geo-blog-post</h4><p>Blog posts built for Google AI Overviews and LLM search: BLUF, E-E-A-T proof, FAQ, Article JSON-LD.</p><p class="loads">Use: writing or outlining a post</p></article>
+      <article class="card skill"><h4>sage-architecture</h4><p>Bespoke Sage/Roots architecture: ACF Pro groups registered in PHP, Customizer dark-mode default, branch hygiene, security, Tailwind/theme.json token bridge, CI/CD for built themes.</p><p class="loads">Use: ACF fields, Customizer, architecture, deploy workflows</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="commands">
+  <div class="wrap">
+    <h2>Commands</h2>
+    <p class="sub">Namespaced as <code>/pb:…</code> so they never shadow a project's own commands. They load only when typed.</p>
+    <div class="grid">
+      <article class="card cmd"><h4>/pb:new-project [slug] [url]</h4><p>Copies <code>templates/project/</code> into the current repo without overwriting anything: <code>CLAUDE.md</code>, settings, deploy workflow, setup scripts.</p></article>
+      <article class="card cmd"><h4>/pb:plan &lt;what&gt;</h4><p>Plans an L-size change before any code is written.</p></article>
+      <article class="card cmd"><h4>/pb:fix &lt;what&gt;</h4><p>Fixes a bug or makes a small change end to end, then ships it.</p></article>
+      <article class="card cmd"><h4>/pb:review [PR]</h4><p>Senior WordPress/Sage review of the current branch or a pull request.</p></article>
+      <article class="card cmd"><h4>/pb:ship</h4><p>Runs checks, commits, pushes and opens a PR with auto-merge enabled.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="agents">
+  <div class="wrap">
+    <h2>Agent &amp; hook</h2>
+    <div class="grid">
+      <article class="card agent"><h4>agents/wp-reviewer.md</h4><p>Senior WordPress/Sage code reviewer. Reviews a diff against the WordPress Developer Handbook and the playbook rules. Tools: Read, Grep, Glob, Bash.</p><p class="loads">Use: proactively after changing PHP, Blade, JS or CSS, and before a PR</p></article>
+      <article class="card hook"><h4>hooks/phpcs-on-edit.sh</h4><p>PostToolUse hook: runs PHPCS (errors only) on each PHP file Claude edits and sends problems straight back so Claude fixes them before moving on. Warnings are left to <code>wp-review</code> and CI.</p><p class="loads">Runs: after every Edit / Write of a <code>.php</code> file</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="template">
+  <div class="wrap">
+    <h2>Project template</h2>
+    <p class="sub"><code>templates/project/</code> is a drop-in kit for a theme repo. <code>/pb:new-project</code> copies it in. Project facts go in these files; the generic standards stay in the playbook.</p>
+    <div class="grid">
+      <article class="card tpl"><h4>CLAUDE.md</h4><p>Agent brief under 2 KB: stack, how work ships, commands, project facts and hard no's, what to ask first, a pointer to <code>doc-references</code>.</p></article>
+      <article class="card tpl"><h4>.claude/settings.json</h4><p>Permissions: allow safe git/gh/npm/composer/phpcs; ask for <code>wp</code> and PR reviews; deny force-push, pushes to <code>main</code>, DB resets, <code>rm -rf</code>, reading <code>.env</code>. <code>WebFetch</code> allowed on every <code>doc-references</code> domain. PHPCS hook wired in.</p></article>
+      <article class="card tpl"><h4>.github/workflows/deploy.yml</h4><p>Build on the runner (<code>npm ci &amp;&amp; npm run build</code>, <code>composer install --no-dev</code>), upload one complete theme, swap folders over SSH, health-check homepage/REST/CSS, auto-rollback on failure.</p></article>
+      <article class="card tpl"><h4>tools/ &amp; .github/scripts/</h4><p><code>github-setup.sh</code>, <code>hostinger-secrets.sh</code>, <code>pack-theme.sh</code>, <code>server-deploy.sh</code>, <code>health-check.sh</code>.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="ship">
+  <div class="wrap">
+    <h2>Ship workflow</h2>
+    <p class="sub">The daily loop once a project has the template. Full guide: <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/blob/main/playbook/automated-ship-workflow.md">playbook/automated-ship-workflow.md</a>.</p>
+    <figure>
+      <svg viewBox="0 0 1000 170" role="img" aria-labelledby="f3t f3d">
+        <title id="f3t">Ship workflow</title>
+        <desc id="f3d">Describe the change, run /pb:fix or /pb:ship, a PR opens with auto-merge, CI passes, squash-merge, deploy.yml builds and swaps the theme over SSH, a health check runs, and the deploy rolls back automatically if unhealthy.</desc>
+        <g font-size="14">
+          <rect class="box c" x="10" y="50" width="130" height="60" rx="8" stroke-width="2"/><text x="75" y="86" text-anchor="middle" font-weight="600">/pb:fix · /pb:ship</text>
+          <path class="arrow" d="M140,80 L170,80"/>
+          <rect class="box" x="170" y="50" width="130" height="60" rx="8"/><text x="235" y="78" text-anchor="middle" font-weight="600">PR opens</text><text x="235" y="98" text-anchor="middle" class="muted" font-size="12">auto-merge on</text>
+          <path class="arrow" d="M300,80 L330,80"/>
+          <rect class="box" x="330" y="50" width="110" height="60" rx="8"/><text x="385" y="86" text-anchor="middle" font-weight="600">CI green</text>
+          <path class="arrow" d="M440,80 L470,80"/>
+          <rect class="box" x="470" y="50" width="130" height="60" rx="8"/><text x="535" y="86" text-anchor="middle" font-weight="600">squash-merge</text>
+          <path class="arrow" d="M600,80 L630,80"/>
+          <rect class="box t" x="630" y="50" width="150" height="60" rx="8" stroke-width="2"/><text x="705" y="78" text-anchor="middle" font-weight="600">deploy.yml</text><text x="705" y="98" text-anchor="middle" class="muted" font-size="12">build · swap over SSH</text>
+          <path class="arrow" d="M780,80 L810,80"/>
+          <rect class="box" x="810" y="50" width="120" height="60" rx="8"/><text x="870" y="86" text-anchor="middle" font-weight="600">health check</text>
+          <path class="arrow h" d="M870,110 L870,140 L705,140 L705,112" stroke-dasharray="5 4"/>
+          <text x="790" y="158" text-anchor="middle" class="muted" font-size="12">unhealthy → automatic rollback to previous build</text>
+        </g>
+      </svg>
+    </figure>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Install</h2>
+    <p class="sub">Git Bash (Windows), WSL or macOS. Two minutes, once per machine.</p>
+<pre><code>git clone https://github.com/matthummel-pa/ai-dev-standards-playbook.git ~/code/ai-dev-standards-playbook
+bash ~/code/ai-dev-standards-playbook/scripts/install.sh</code></pre>
+    <p>Then in any project:</p>
+<pre><code>cd ~/code/my-theme
+claude
+/pb:new-project my-theme https://example.com</code></pre>
+    <h3>Scripts</h3>
+    <table>
+      <thead><tr><th>Script</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td><code>scripts/install.sh</code></td><td>Copies the playbook into <code>~/.claude</code> and adds the SessionStart hook (backup at <code>settings.json.bak-playbook</code>).</td></tr>
+        <tr><td><code>scripts/sync.sh</code></td><td>Pulls <code>main</code> and re-copies rules, skills, commands, agents and hooks. Run by the hook; run by hand to apply right away.</td></tr>
+        <tr><td><code>scripts/new-project.sh</code></td><td>Copies the project template into the current repo without overwriting anything.</td></tr>
+        <tr><td><code>scripts/validate.py</code></td><td>CI check: frontmatter, core-rule size budget, private-detail scan, CHANGELOG discipline.</td></tr>
+      </tbody>
+    </table>
+    <h3>Change a rule</h3>
+    <ol>
+      <li>Branch. Edit. Add a <code>CHANGELOG.md</code> line; bump <code>VERSION</code> if behavior changes.</li>
+      <li>Open a PR. <code>validate.yml</code> checks frontmatter, size budgets, private details and shell scripts.</li>
+      <li>Merge. Every machine picks it up on its next session.</li>
+    </ol>
+    <p>Before adding a rule, read <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/blob/main/playbook/rules-architecture.md">rules-architecture.md</a>. Most new guidance belongs in a skill, not an always-on rule.</p>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">Public repo, generic standards only. Hosts, logins, client names and product data stay in each project's own <code>CLAUDE.md</code>. · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook">github.com/matthummel-pa/ai-dev-standards-playbook</a></div></footer>
+</body>
+</html>

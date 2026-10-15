@@ -5,7 +5,7 @@ All notable changes to the playbook. Format: [Keep a Changelog](https://keepacha
 ## [1.2.0] - 2026-10-14
 
 ### Added
-- `docs/`: GitHub Pages site with a card for every rule, skill, command, agent, hook and template file, plus diagrams of the auto-update flow, what loads when, and the ship workflow. Deployed by `.github/workflows/pages.yml` on every push to `main` that touches `docs/`.
+- `docs/`: GitHub Pages site. `scripts/build-docs.py` renders `docs/src/template.html` with one card per rule, skill, command and agent read from their frontmatter, so a new `SKILL.md` appears on the site without editing HTML. Diagrams of the auto-update flow, what loads when, and the ship workflow. `.github/workflows/pages.yml` builds and deploys on every push to `main` that touches docs, rules, skills, commands, agents or `VERSION`.
 
 ### Changed
 - `README.md`: rewritten for scanning — why it exists, what's inside (tables for skills and commands), install, auto-update, what loads when, what's new, and a link to the docs site.

@@ -32,7 +32,7 @@ Every always-on instruction costs tokens in every session, and standards that li
 | **Hook** (`hooks/`) | `phpcs-on-edit.sh` — runs PHPCS on every PHP file Claude edits and feeds errors back | On every edit |
 | **Project template** (`templates/project/`) | `CLAUDE.md`, `.claude/settings.json` (permissions + WebFetch allowlist), GitHub Actions deploy over SSH with health check and auto-rollback, setup scripts | Copied into each repo |
 | **Guides** (`playbook/`) | Automated ship workflow · Token discipline · Rules architecture | Read by humans |
-| **Scripts** (`scripts/`) | `install.sh` · `sync.sh` · `new-project.sh` · `validate.py` | Run by you / CI |
+| **Scripts** (`scripts/`) | `install.sh` · `sync.sh` · `new-project.sh` · `validate.py` · `build-docs.py` | Run by you / CI |
 
 ### Skills at a glance
 
@@ -107,7 +107,7 @@ Before adding a rule, read [`playbook/rules-architecture.md`](playbook/rules-arc
 
 See [`CHANGELOG.md`](CHANGELOG.md) for the full list.
 
-- **1.2.0** — README rewrite; GitHub Pages docs site (`docs/`) with a card and diagram for every resource.
+- **1.2.0** — README rewrite; GitHub Pages docs site generated from the live rules, skills, commands and agents (`scripts/build-docs.py`), with diagrams of the auto-update flow, loading layers and ship workflow.
 - **1.1.0** — `doc-references` skill (canonical docs for the whole stack + verify-before-coding rule); `WebFetch` allowlist in the project `settings.json`; one core-rule line pointing to it.
 - **1.0.0** — Initial release: core + path rules, five skills, `/pb:*` commands, `wp-reviewer` agent, PHPCS hook, project template with SSH deploy and rollback, install/sync scripts, validation CI.
 
@@ -117,7 +117,9 @@ See [`CHANGELOG.md`](CHANGELOG.md) for the full list.
 
 1. Branch. Edit. Add a `CHANGELOG.md` line. Bump `VERSION` if behavior changes.
 2. Open a PR. `validate.yml` checks frontmatter, size budgets, private details and shell scripts.
-3. Merge. Every machine picks it up on its next session.
+3. Merge. Every machine picks it up on its next session, and the docs site rebuilds itself from the new frontmatter.
+
+Preview the docs site locally: `python3 scripts/build-docs.py` then open `docs/index.html`.
 
 ## Public vs private
 

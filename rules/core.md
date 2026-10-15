@@ -9,4 +9,5 @@ Loaded in every session from ai-dev-standards-playbook. Keep this file under 1 K
 - Accessibility: WCAG 2.1 AA, one `h1`, sequential headings, visible focus.
 - Never invent metrics, testimonials or client names.
 - Token discipline: `rg` before opening big files; read only what you need; summarize logs; don't re-run passing checks.
+- Verify versioned APIs (hooks, Tailwind v4, Next, Node) against official docs: `doc-references` skill.
 - Ask only for DNS, PHP versions, production database writes, deletions, spending money and secrets.

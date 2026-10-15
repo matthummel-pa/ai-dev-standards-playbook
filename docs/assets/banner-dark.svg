@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="AI Dev Standards and Playbook: rules, skills and commands for Claude Code, auto-synced to every machine">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#58a6ff" stop-opacity=".18"/><stop offset="1" stop-color="#2dd4bf" stop-opacity=".18"/></linearGradient>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#30363d" stroke-width="1" opacity=".5"/></pattern>
+  </defs>
+  <rect width="1200" height="300" rx="16" fill="#0e1116"/>
+  <rect width="1200" height="300" rx="16" fill="url(#grid)"/>
+  <rect width="1200" height="300" rx="16" fill="url(#g)"/>
+  <text x="64" y="118" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-size="54" font-weight="700" fill="#e6edf3">⚡ AI Dev Standards &amp; Playbook</text>
+  <text x="64" y="162" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-size="22" fill="#9aa4b2">Rules, skills and commands that teach Claude Code how to build WordPress and front-end projects</text>
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" fill="#e6edf3">
+    <rect x="64" y="200" width="116" height="34" rx="17" fill="none" stroke="#58a6ff" stroke-width="2"/><text x="122" y="222" text-anchor="middle">rules/</text>
+    <rect x="192" y="200" width="116" height="34" rx="17" fill="none" stroke="#2dd4bf" stroke-width="2"/><text x="250" y="222" text-anchor="middle">skills/</text>
+    <rect x="320" y="200" width="136" height="34" rx="17" fill="none" stroke="#7c3aed" stroke-width="2"/><text x="388" y="222" text-anchor="middle">/pb:commands</text>
+    <rect x="468" y="200" width="116" height="34" rx="17" fill="none" stroke="#b45309" stroke-width="2"/><text x="526" y="222" text-anchor="middle">agents/</text>
+    <rect x="596" y="200" width="156" height="34" rx="17" fill="none" stroke="#9aa4b2" stroke-width="2"/><text x="674" y="222" text-anchor="middle">templates/project</text>
+  </g>
+  <text x="64" y="268" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-size="15" fill="#9aa4b2">Install once · merge to main · every machine updates on its next session</text>
+  <g transform="translate(900,60)" fill="none" stroke="#58a6ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="0" y="0" width="90" height="60" rx="8"/><rect x="150" y="0" width="90" height="60" rx="8" stroke="#2dd4bf"/><rect x="75" y="120" width="90" height="60" rx="8" stroke="#9aa4b2"/>
+    <path d="M90 30h60" marker-end="none"/><path d="M45 60v30h75v30" /><path d="M195 60v30h-75"/>
+    <text x="45" y="37" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#e6edf3" stroke="none">GitHub</text>
+    <text x="195" y="37" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#e6edf3" stroke="none">~/.claude</text>
+    <text x="120" y="157" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#e6edf3" stroke="none">Claude Code</text>
+  </g>
+</svg>

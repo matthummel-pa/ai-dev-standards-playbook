@@ -7,6 +7,7 @@ All notable changes to the playbook. Format: [Keep a Changelog](https://keepacha
 ### Changed
 - `README.md`: banner (light/dark), status badges, section nav, mermaid diagrams for auto-update, ship workflow and loading layers, collapsible skills/commands/layout tables, version table, footer with back-to-top.
 - `docs/assets/`: banner SVGs.
+- Docs site restyled to match: banner, badges, "Why" grid, emoji section headings, a "What's new" table generated from `CHANGELOG.md`, and a footer with back-to-top.
 
 ## [1.2.0] - 2026-10-14
 

@@ -29,6 +29,13 @@
   pre code { background: none; padding: 0; }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
   header.hero { padding: 3rem 0 2rem; border-bottom: 1px solid var(--line); }
+  .banner { width: 100%; height: auto; display: block; border-radius: 12px; border: 1px solid var(--line); }
+  .badges { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0 .75rem; }
+  .badges img { height: 20px; display: block; }
+  .meta { color: var(--muted); font-size: .95rem; margin: 0; }
+  .why { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .why div { border: 1px solid var(--line); border-radius: 10px; padding: .9rem 1rem; background: var(--bg-2); }
+  .why strong { display: block; margin-bottom: .25rem; }
   header.hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 .5rem; line-height: 1.15; }
   header.hero p.lede { font-size: 1.15rem; color: var(--muted); max-width: 60ch; margin: 0 0 1rem; }
   .pill { display: inline-block; font-size: .85rem; padding: .2em .7em; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); margin-right: .5rem; }
@@ -72,20 +79,29 @@
   svg .bar { stroke-width: 4; }
 </style>
 </head>
-<body>
+<body id="top">
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="hero">
   <div class="wrap">
-    <span class="pill">ai-dev-standards-playbook</span><span class="pill" id="ver">v{{VERSION}}</span>
-    <h1>⚡ AI Dev Standards &amp; Playbook</h1>
-    <p class="lede">One repo that teaches Claude Code how to build WordPress and front-end projects — rules, skills, commands, a reviewer agent and a deploy kit — and keeps every machine in sync.</p>
-    <p><a href="https://github.com/matthummel-pa/ai-dev-standards-playbook">GitHub repo</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/blob/main/CHANGELOG.md">Changelog</a> · by <a href="https://matthummel.com">Matt Hummel</a></p>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
+      <img class="banner" src="assets/banner-light.svg" alt="AI Dev Standards &amp; Playbook — rules, skills and commands that teach Claude Code how to build WordPress and front-end projects" width="1200" height="300">
+    </picture>
+    <p class="badges">
+      <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml"><img alt="Validate CI status" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml/badge.svg"></a>
+      <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml"><img alt="Docs site deploy status" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml/badge.svg"></a>
+      <img alt="Version {{VERSION}}" src="https://img.shields.io/badge/version-{{VERSION}}-0a66c2">
+      <img alt="Generic and public standards" src="https://img.shields.io/badge/standards-generic%20%26%20public-0f766e">
+    </p>
+    <p class="lede"><strong>One repo that teaches Claude Code how to build WordPress and front-end projects, and keeps every machine in sync.</strong> Coding standards, SEO rules, writing voice, reference docs, slash commands, a reviewer agent and a drop-in deploy kit. Install once; every merge to <code>main</code> updates every Claude Code session automatically.</p>
+    <p class="meta"><a href="https://github.com/matthummel-pa/ai-dev-standards-playbook">GitHub repo</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/blob/main/CHANGELOG.md">Changelog</a> · Maintained by <a href="https://matthummel.com">Matt Hummel</a>, full-stack &amp; WordPress developer, Gettysburg, PA</p>
   </div>
 </header>
 
 <nav class="toc" aria-label="Sections">
   <div class="wrap"><ul>
+    <li><a href="#why">Why</a></li>
     <li><a href="#how">How it works</a></li>
     <li><a href="#loads">What loads when</a></li>
     <li><a href="#rules">Rules</a></li>
@@ -95,14 +111,28 @@
     <li><a href="#template">Project template</a></li>
     <li><a href="#ship">Ship workflow</a></li>
     <li><a href="#install">Install</a></li>
+    <li><a href="#changes">What's new</a></li>
   </ul></div>
 </nav>
 
 <main id="main">
 
+<section id="why">
+  <div class="wrap">
+    <h2>🎯 Why this exists</h2>
+    <p class="sub">Every always-on instruction costs tokens in every session, and standards that live in one project don't follow you to the next. This repo fixes both.</p>
+    <div class="why">
+      <div><strong>📍 One source of truth</strong>How work gets done — standards, security, SEO, voice — in one place, for every project.</div>
+      <div><strong>🪶 Loads only what's needed</strong>One 0.9 KB core rule is always on. Everything else loads by file path or when a skill is used.</div>
+      <div><strong>🔁 Auto-updates</strong>A SessionStart hook pulls <code>main</code> and re-installs on every new Claude Code session.</div>
+      <div><strong>🔓 Public and generic</strong>No hosts, logins, client names or product data. Project facts stay in each project's <code>CLAUDE.md</code>.</div>
+    </div>
+  </div>
+</section>
+
 <section id="how">
   <div class="wrap">
-    <h2>How it works</h2>
+    <h2>🔁 How it works</h2>
     <p class="sub">Merge to <code>main</code>, and every Claude Code session on every machine picks it up. No manual copying, no stale rules.</p>
     <figure>
       <svg viewBox="0 0 1000 220" role="img" aria-labelledby="f1t f1d">
@@ -135,7 +165,7 @@
 
 <section id="loads">
   <div class="wrap">
-    <h2>What loads when</h2>
+    <h2>🪶 What loads when</h2>
     <p class="sub">Every always-on line costs tokens in every session. The playbook keeps one tiny core rule always on and loads everything else only when it's needed.</p>
     <figure>
       <svg viewBox="0 0 1000 300" role="img" aria-labelledby="f2t f2d">
@@ -182,7 +212,7 @@
 
 <section id="rules">
   <div class="wrap">
-    <h2>Rules</h2>
+    <h2>📐 Rules</h2>
     <p class="sub">Installed to <code>~/.claude/rules/playbook/</code>. Only <code>core.md</code> is always on; the rest declare <code>paths:</code> and load when Claude reads or edits a matching file.</p>
     <div class="grid">
       {{RULES}}
@@ -192,7 +222,7 @@
 
 <section id="skills">
   <div class="wrap">
-    <h2>Skills</h2>
+    <h2>🧠 Skills</h2>
     <p class="sub">Installed to <code>~/.claude/skills/&lt;name&gt;/</code>. Claude sees every description at all times and loads the full body only when the task matches.</p>
     <div class="grid">
       {{SKILLS}}
@@ -202,7 +232,7 @@
 
 <section id="commands">
   <div class="wrap">
-    <h2>Commands</h2>
+    <h2>⌨️ Commands</h2>
     <p class="sub">Namespaced as <code>/pb:…</code> so they never shadow a project's own commands. They load only when typed.</p>
     <div class="grid">
       {{COMMANDS}}
@@ -212,7 +242,7 @@
 
 <section id="agents">
   <div class="wrap">
-    <h2>Agent &amp; hook</h2>
+    <h2>🕵️ Agent &amp; hook</h2>
     <div class="grid">
       {{AGENTS}}
       <article class="card hook"><h4>hooks/phpcs-on-edit.sh</h4><p>PostToolUse hook: runs PHPCS (errors only) on each PHP file Claude edits and sends problems straight back so Claude fixes them before moving on. Warnings are left to <code>wp-review</code> and CI.</p><p class="loads">Runs: after every Edit / Write of a <code>.php</code> file</p></article>
@@ -222,7 +252,7 @@
 
 <section id="template">
   <div class="wrap">
-    <h2>Project template</h2>
+    <h2>📁 Project template</h2>
     <p class="sub"><code>templates/project/</code> is a drop-in kit for a theme repo. <code>/pb:new-project</code> copies it in. Project facts go in these files; the generic standards stay in the playbook.</p>
     <div class="grid">
       <article class="card tpl"><h4>CLAUDE.md</h4><p>Agent brief under 2 KB: stack, how work ships, commands, project facts and hard no's, what to ask first, a pointer to <code>doc-references</code>.</p></article>
@@ -235,7 +265,7 @@
 
 <section id="ship">
   <div class="wrap">
-    <h2>Ship workflow</h2>
+    <h2>🚀 Ship workflow</h2>
     <p class="sub">The daily loop once a project has the template. Full guide: <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/blob/main/playbook/automated-ship-workflow.md">playbook/automated-ship-workflow.md</a>.</p>
     <figure>
       <svg viewBox="0 0 1000 170" role="img" aria-labelledby="f3t f3d">
@@ -263,7 +293,7 @@
 
 <section id="install">
   <div class="wrap">
-    <h2>Install</h2>
+    <h2>🛠 Install</h2>
     <p class="sub">Git Bash (Windows), WSL or macOS. Two minutes, once per machine.</p>
 <pre><code>git clone https://github.com/matthummel-pa/ai-dev-standards-playbook.git ~/code/ai-dev-standards-playbook
 bash ~/code/ai-dev-standards-playbook/scripts/install.sh</code></pre>
@@ -292,9 +322,27 @@ claude
   </div>
 </section>
 
+<section id="changes">
+  <div class="wrap">
+    <h2>🆕 What's new</h2>
+    <p class="sub">Generated from <code>CHANGELOG.md</code>. Full history on GitHub.</p>
+    <table>
+      <thead><tr><th>Version</th><th>Date</th><th>Highlights</th></tr></thead>
+      <tbody>
+      {{CHANGES}}
+      </tbody>
+    </table>
+  </div>
+</section>
+
 </main>
 
-<footer><div class="wrap">Public repo, generic standards only. Hosts, logins, client names and product data stay in each project's own <code>CLAUDE.md</code>. · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook">github.com/matthummel-pa/ai-dev-standards-playbook</a></div></footer>
+<footer><div class="wrap" style="text-align:center">
+  <p><a href="https://github.com/matthummel-pa/ai-dev-standards-playbook">GitHub repo</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/tree/main/playbook">Guides</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/issues">Issues</a> · <a href="https://matthummel.com">matthummel.com</a></p>
+  <p>Built for <a href="https://claude.com/claude-code">Claude Code</a> · WordPress · Sage/Bedrock · Tailwind CSS v4 · GitHub Actions</p>
+  <p>Public repo, generic standards only. Hosts, logins, client names and product data stay in each project's own <code>CLAUDE.md</code>.</p>
+  <p><a href="#top">↑ Back to top</a></p>
+</div></footer>
 <!-- Generated by scripts/build-docs.py from docs/src/template.html — edit the template, not this file. -->
 </body>
 </html>

@@ -128,6 +128,26 @@ def agents() -> str:
     return "\n      ".join(out)
 
 
+def changes(limit: int = 6) -> str:
+    """Rows for the What's new table: version, date and the first bullet of each release."""
+    text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    rows = []
+    for m in re.finditer(r"^## \[(\d+\.\d+\.\d+)\] - (\d{4}-\d{2}-\d{2})\n(.*?)(?=^## \[|\Z)", text, re.S | re.M):
+        ver, date, body = m.groups()
+        bullets = [re.sub(r"`([^`]+)`", r"<code>\1</code>", esc(l[2:].strip())).replace("&lt;code&gt;", "<code>")
+                   for l in body.splitlines() if l.startswith("- ")]
+        first = bullets[0] if bullets else ""
+        first = re.sub(r"<code>([^<]*)</code>", lambda mm: f"<code>{mm.group(1)}</code>", first)
+        # Keep the highlight short.
+        plain = re.sub(r"<[^>]+>", "", first)
+        if len(plain) > 180:
+            first = esc(plain[:179].rstrip()) + "…"
+        rows.append(f"<tr><td><strong>{esc(ver)}</strong></td><td>{esc(date)}</td><td>{first}</td></tr>")
+        if len(rows) >= limit:
+            break
+    return "\n      ".join(rows)
+
+
 def build() -> str:
     tpl = TEMPLATE.read_text(encoding="utf-8")
     version = (ROOT / "VERSION").read_text().strip()
@@ -135,7 +155,8 @@ def build() -> str:
                .replace("{{RULES}}", rules())
                .replace("{{SKILLS}}", skills())
                .replace("{{COMMANDS}}", commands())
-               .replace("{{AGENTS}}", agents()))
+               .replace("{{AGENTS}}", agents())
+               .replace("{{CHANGES}}", changes()))
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ Sage 10/11 themes: Blade, Acorn, Tailwind, Vite. Follow the official docs, not c
 - The WordPress template hierarchy still applies; Blade lives in `resources/views/`.
 - Chrome lives in `sections/` (`header`, `footer`, `sidebar`); reusable chunks in `partials/`; named page templates in `template-*.blade.php`.
 - Data comes from View Composers (`app/View/Composers/`) or small `App\` helpers, not from logic in Blade.
-- Visitor-facing copy belongs in editable fields (the project's field registry or ACF), not hardcoded in Blade. UI chrome is the exception.
+- Visitor-facing copy belongs in editable content (blocks or the project's field registry), not hardcoded in Blade. UI chrome is the exception.
 - After Blade edits, clear compiled views: `wp acorn view:clear`.
 
 ## PHP and JS
@@ -32,7 +32,7 @@ Sage 10/11 themes: Blade, Acorn, Tailwind, Vite. Follow the official docs, not c
 ## Front end
 - Tailwind utilities in Blade; shared look in the project's CSS. No CSS-in-JS.
 - Mobile first. Media get width/height or an aspect ratio; lazy-load below the fold; WebP/AVIF for new assets.
-- Native HTML before ARIA; visible focus; WCAG 2.1 AA contrast in light and dark mode.
+- Native HTML before ARIA; visible focus; WCAG 2.2 AA contrast in light and dark mode.
 
 ## Assets and build
 - Vite `base` must match the live theme folder (`/wp-content/themes/<slug>/public/build/`).

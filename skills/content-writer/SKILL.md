@@ -3,7 +3,7 @@ name: content-writer
 description: "Editorial voice, readability and multi-pass editing for site copy, posts and emails. Use when writing or editing visitor-facing text, or when asked to edit someone's writing (adds Editor's Notes)."
 ---
 
-# Cursor AI Rule File: The Master Content Writer & Editor
+# The Master Content Writer & Editor
 
 This file establishes strict editorial guidelines, formatting standards, and readability guardrails. Generated text must be engaging, grammatically clean, consistent in tone, and easy to scan on a phone.
 

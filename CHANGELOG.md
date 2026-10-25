@@ -2,6 +2,22 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.3.0] - 2026-10-24
+
+### Added
+- `rules/wordpress/wordpress-stack.md`: default stack, when not to use it, blocks, performance, plugin policy, Git and deploy, testing and QA.
+- `rules/frontend/frontend-ux.md`: design tokens, UX states, WCAG 2.2 AA, asset optimization.
+- `rules/seo/seo-analytics.md`: search intent, topical authority, technical SEO, schema, AEO, E-E-A-T, GA4, GTM, Bing.
+- `rules/marketing/marketing-copy.md`: voice, rule of one, trust and proof, repurposing, social, email.
+- `rules/business/business-ops.md`: scopes, client communication, launch checklist, handoff, privacy, docs.
+  These five absorb the personal topic files that used to sit in `~/.claude/rules/`. Personal voice, channels and process stay in a private overlay outside this repo.
+
+### Changed
+- Accessibility baseline is WCAG 2.2 AA everywhere (`core.md`, `sage.md` and `frontend-ux.md` were 2.1). `sage.md`: copy line allows blocks as well as fields.
+- `rules/seo/seo-ai-search.md` and `skills/growth-design`: name "the site's SEO plugin" instead of a specific plugin.
+- `README.md`: rules table lists the new folders.
+- Removed Cursor references: `wp-review` rule, `content-writer` and `growth-design` skill titles, and the `.cursor` excludes in `templates/project` (`pack-theme.sh`, `deploy.yml`).
+
 ## [1.2.1] - 2026-10-14
 
 ### Changed

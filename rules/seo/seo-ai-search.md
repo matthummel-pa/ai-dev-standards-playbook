@@ -31,7 +31,7 @@ When writing, refactoring, or generating content, web pages, or components, stri
 ## 4. Content Formatting Guidelines
 - **Sentence 1 Value:** Ensure every section's opening sentence provides substantive value rather than introductory fluff.
 - **Clear Authorship & Sourcing:** Include clear author bio components, publication dates, and citations/links to authoritative primary sources when writing posts or long-form pages.
-- **Canonicalization:** Maintain clean URL structures; leave canonical tags to WordPress/Yoast unless the owner asks for a theme-level override.
+- **Canonicalization:** Maintain clean URL structures; leave canonical tags to WordPress and the site's SEO plugin unless the owner asks for a theme-level override.
 
 ## Rules Checklist Before Committing Content/Pages:
 - [ ] Is the primary answer easily extractable in 1-2 sentences near the top?

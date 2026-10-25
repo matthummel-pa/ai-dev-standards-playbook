@@ -5,7 +5,7 @@ paths:
 
 # Peer review workflow (wp-dev-kit)
 
-The owner works with several AI tools (Cursor, Claude, ChatGPT and others). All agents follow the same rules.
+The owner works with several AI tools (Claude, ChatGPT and others). All agents follow the same rules.
 
 ## Before you change code
 

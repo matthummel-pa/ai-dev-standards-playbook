@@ -3,7 +3,7 @@ name: growth-design
 description: "Growth, CRO, brand design and front-end guardrails as three expert personas (marketer, graphic designer, web designer). Use for landing pages, conversion copy, visual polish or a design review."
 ---
 
-# Cursor AI Rule File: The Growth & Design Powerhouse
+# The Growth & Design Powerhouse
 
 This file establishes strict guidelines, expert personas, and technical guardrails. Generated code, copy, and UI must be optimized for marketing conversion, visual aesthetics, and modern web design.
 
@@ -18,7 +18,7 @@ Every user-facing line of text, landing page structure, and metadata tag must be
 ### Rules and guardrails
 
 - **Direct-response copy:** Headlines may use Hook–Story–Offer or Pain–Agitation–Solution, but stay truthful. Lead with visitor benefit, not a feature dump. Voice: developer/marketer who ships WordPress and other web apps.
-- **SEO excellence:** Semantic HTML5 (`<main>`, `<article>`, `<section>`). Meaningful image `alt` (empty `alt=""` only when decorative). Titles and meta from WordPress/Yoast or theme `document` helpers — do not hardcode a second title stack. JSON-LD only when requested.
+- **SEO excellence:** Semantic HTML5 (`<main>`, `<article>`, `<section>`). Meaningful image `alt` (empty `alt=""` only when decorative). Titles and meta from WordPress and the site's SEO plugin or theme `document` helpers — do not hardcode a second title stack. JSON-LD only when requested.
 - **CRO triggers:** One primary CTA above the fold (Hire / Say hello / Contact). Trust is GitHub, live repos, writing, and real work cards — not testimonial placeholders or fake social proof.
 - **Analytics and events:** If adding tracking, use a clear event schema (name, properties) for hello clicks and contact submit. No checkout/signup events on this site.
 

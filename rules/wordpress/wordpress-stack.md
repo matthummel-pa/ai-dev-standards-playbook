@@ -1,6 +1,10 @@
 ---
 paths:
   - "**/*.php"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.ts"
+  - "**/*.tsx"
   - "**/block.json"
   - "**/theme.json"
   - "**/composer.json"

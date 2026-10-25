@@ -16,6 +16,7 @@ All notable changes to the playbook. Format: [Keep a Changelog](https://keepacha
 - Accessibility baseline is WCAG 2.2 AA everywhere (`core.md`, `sage.md` and `frontend-ux.md` were 2.1). `sage.md`: copy line allows blocks as well as fields.
 - `rules/seo/seo-ai-search.md` and `skills/growth-design`: name "the site's SEO plugin" instead of a specific plugin.
 - `README.md`: rules table lists the new folders.
+- Core Web Vitals thresholds spelled out in `seo-analytics.md` (LCP 2.5 s, INP 200 ms, CLS 0.1 at the 75th percentile); canonical URL points to the original publisher; `wordpress-stack.md` also loads on block JavaScript; README loading diagram lists the new rules.
 - Removed Cursor references: `wp-review` rule, `content-writer` and `growth-design` skill titles, and the `.cursor` excludes in `templates/project` (`pack-theme.sh`, `deploy.yml`).
 
 ## [1.2.1] - 2026-10-14

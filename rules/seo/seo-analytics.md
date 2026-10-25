@@ -52,7 +52,9 @@ Covers Google and Bing.
 * Give each location or service area its own page only when it has distinct content.
 
 ## 8. Core Web Vitals
-* LCP under 2.5 seconds, low CLS, fast INP, 90+ mobile PageSpeed. Implementation rules are in `wordpress.md`.
+* Pass Core Web Vitals at the 75th percentile of real users: LCP at or under 2.5 s, INP at or under 200 ms, CLS at or under 0.1.
+* Treat PageSpeed Insights and Lighthouse scores (aim for 90+ on mobile) as diagnostics, not a pass/fail gate. A good lab score does not guarantee good field data.
+* Implementation rules are in `wordpress-stack.md`.
 
 ## 9. Audience growth
 * Build in retention: sticky navigation, lead magnets, inline newsletter opt-ins, and contextual internal recommendations.

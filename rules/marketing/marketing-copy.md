@@ -34,7 +34,7 @@ The owner's own voice, channels and promises live in a private overlay, not here
 
 ## 6. Content repurposing
 * **Create once, distribute everywhere:** turn a long-form article into a short video script, a social carousel, a newsletter feature, and an inline FAQ.
-* When cross-posting (DEV.to and similar), set the canonical URL to the original on the owner's own site.
+* When cross-posting (DEV.to and similar), set the canonical URL to the original publisher's site (the owner's own site for their content, the client's site for client content).
 
 
 ## 7. Social content

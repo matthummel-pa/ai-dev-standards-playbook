@@ -177,7 +177,10 @@ flowchart LR
   subgraph path["By file path"]
     wp["wordpress/*.md<br/>*.php · theme.json"]
     sage["sage/sage.md<br/>app/ · resources/"]
-    seo["seo/*.md<br/>Blade · seo*.php"]
+    seo["seo/*.md<br/>Blade · seo*.php · *.md"]
+    fe["frontend/frontend-ux.md<br/>css · js · Blade"]
+    mk["marketing/marketing-copy.md<br/>*.md · *.mdx"]
+    biz["business/business-ops.md<br/>*.md · docs/"]
     proj["project .claude/rules/"]
   end
   subgraph demand["On demand"]

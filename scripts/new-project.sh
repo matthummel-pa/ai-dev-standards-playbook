@@ -15,4 +15,6 @@ while IFS= read -r -d '' f; do
   case "$rel" in *.sh) chmod +x "$rel" ;; esac
   echo "added   $rel"
 done < <(find "$src" -type f -print0)
-for s in "${skipped[@]:-}"; do [ -n "$s" ] && echo "skipped $s (exists — merge by hand)"; done
+for s in "${skipped[@]:-}"; do
+  if [ -n "$s" ]; then echo "skipped $s (exists — merge by hand)"; fi
+done

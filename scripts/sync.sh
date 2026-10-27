@@ -6,7 +6,7 @@
 # Installs (real files, no symlinks, so it works on Windows, WSL, macOS and in Cowork):
 #   rules/    → ~/.claude/rules/playbook/        (always-on core.md + path-scoped rules)
 #   skills/*  → ~/.claude/skills/<name>/          (tracked in .playbook-manifest)
-#   commands/ → ~/.claude/commands/pb/           (/pb:ship, /pb:fix, /pb:plan, /pb:review, /pb:new-project)
+#   commands/ → ~/.claude/commands/pb/           (/pb:ship, /pb:fix, /pb:plan, /pb:review, /pb:new-project, /pb:new-theme, /pb:dev)
 #   agents/   → ~/.claude/agents/playbook/
 #   hooks/    → ~/.claude/hooks/playbook/
 set -uo pipefail

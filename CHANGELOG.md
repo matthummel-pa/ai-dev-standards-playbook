@@ -12,6 +12,9 @@ All notable changes to the playbook. Format: [Keep a Changelog](https://keepacha
 - `rules/business/business-ops.md`: scopes, client communication, launch checklist, handoff, privacy, docs.
   These five absorb the personal topic files that used to sit in `~/.claude/rules/`. Personal voice, channels and process stay in a private overlay outside this repo.
 
+### Fixed
+- `skills/sage-architecture/SKILL.md`: restored the `*` prefixes on two PHPDoc lines that the bullet cleanup had turned into `-`.
+
 ### Changed
 - Accessibility baseline is WCAG 2.2 AA everywhere (`core.md`, `sage.md` and `frontend-ux.md` were 2.1). `sage.md`: copy line allows blocks as well as fields.
 - `rules/seo/seo-ai-search.md` and `skills/growth-design`: name "the site's SEO plugin" instead of a specific plugin.

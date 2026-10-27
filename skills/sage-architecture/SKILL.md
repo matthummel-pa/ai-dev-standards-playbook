@@ -35,7 +35,7 @@ abstract class AbstractFieldRegistry
     abstract protected function getLocationRules(): array;
 
     /**
-     - Bootstraps the ACF configuration on the appropriate WordPress hook.
+     * Bootstraps the ACF configuration on the appropriate WordPress hook.
      */
     public function init(): void
     {
@@ -43,7 +43,7 @@ abstract class AbstractFieldRegistry
     }
 
     /**
-     - Registers the compiled structural definition array with ACF Core.
+     * Registers the compiled structural definition array with ACF Core.
      */
     public function registerFieldGroup(): void
     {

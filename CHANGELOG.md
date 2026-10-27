@@ -18,6 +18,7 @@ All notable changes to the playbook. Format: [Keep a Changelog](https://keepacha
 - `README.md`: rules table lists the new folders.
 - Core Web Vitals thresholds spelled out in `seo-analytics.md` (LCP 2.5 s, INP 200 ms, CLS 0.1 at the 75th percentile); canonical URL points to the original publisher; `wordpress-stack.md` also loads on JavaScript, JSX, TypeScript, and TSX files; README loading diagram lists the new rules.
 - Removed Cursor references: `wp-review` rule, `content-writer` and `growth-design` skill titles, and the `.cursor` excludes in `templates/project` (`pack-theme.sh`, `deploy.yml`).
+- Bullets use `-` in every rule file and the `sage-architecture` skill (the five new rules used `*`); `wordpress-stack.md` sections renumbered 1-7 (there was no section 4); stray blank line removed in `marketing-copy.md`.
 
 ## [1.2.1] - 2026-10-14
 

@@ -7,7 +7,7 @@ root="$(pwd)"; stage="$(mktemp -d)"; trap 'rm -rf "$stage"' EXIT
 [ -f "$root/public/build/manifest.json" ] || [ -f "$root/public/build/.vite/manifest.json" ] || { echo "No Vite manifest; run npm run build first" >&2; exit 1; }
 mkdir -p "$stage/$slug"
 tar -C "$root" \
-  --exclude='.git' --exclude='.github' --exclude='.cursor' --exclude='.claude' --exclude='node_modules' \
+  --exclude='.git' --exclude='.github' --exclude='.claude' --exclude='node_modules' \
   --exclude='docs' --exclude='tests' --exclude='.env' --exclude='.env.*' --exclude='*.log' --exclude='*.zip' \
   --exclude='CLAUDE.md' --exclude='AGENTS.md' --exclude='.mcp.json' --exclude='phpcs.xml*' --exclude='phpstan*' \
   --exclude='composer.lock' --exclude='package.json' --exclude='package-lock.json' --exclude='vite.config.*' \

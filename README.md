@@ -57,7 +57,7 @@ flowchart LR
 
 | Area | What you get | Loads |
 | --- | --- | --- |
-| 📐 **Rules** `rules/` | `core.md` (always on, < 1 KB) · WordPress standards + review rules · Sage/Roots conventions · AI-search/GEO SEO | By file path |
+| 📐 **Rules** `rules/` | `core.md` (always on, < 1 KB) · WordPress standards, stack and review rules · Sage/Roots conventions · frontend/UX · SEO, GEO and analytics · marketing copy · business ops | By file path |
 | 🧠 **Skills** `skills/` | `doc-references` · `content-writer` · `growth-design` · `portfolio-seo` · `geo-blog-post` · `sage-architecture` | When Claude uses them |
 | ⌨️ **Commands** `commands/pb/` | `/pb:new-project` · `/pb:plan` · `/pb:fix` · `/pb:review` · `/pb:ship` | When you type them |
 | 🕵️ **Agent** `agents/` | `wp-reviewer` — senior WordPress/Sage review of a diff before a PR | On request / proactively |
@@ -103,9 +103,12 @@ flowchart LR
 ```
 rules/                 Path-scoped rules → ~/.claude/rules/playbook/
   core.md                the only always-on rule (< 1 KB)
-  wordpress/             WordPress standards + review rules   (*.php, theme.json, block.json)
+  wordpress/             WordPress standards, stack, review  (*.php, theme.json, block.json)
+  frontend/              Design tokens, UX states, WCAG 2.2   (css, js, Blade)
+  marketing/             Voice, funnels, proof, social, email (*.md)
+  business/              Scopes, comms, launch, handoff       (*.md, docs/)
   sage/                  Sage/Roots conventions               (app/, resources/, vite.config.js)
-  seo/                   AI-search / GEO standards            (Blade, seo*.php, *.mdx)
+  seo/                   AI-search / GEO, SEO and analytics   (Blade, seo*.php, *.mdx, *.md)
 skills/                On-request skills → ~/.claude/skills/<name>/
 commands/pb/           Slash commands → /pb:ship /pb:fix /pb:plan /pb:review /pb:new-project
 agents/                Subagents (wp-reviewer)
@@ -174,7 +177,10 @@ flowchart LR
   subgraph path["By file path"]
     wp["wordpress/*.md<br/>*.php · theme.json"]
     sage["sage/sage.md<br/>app/ · resources/"]
-    seo["seo/*.md<br/>Blade · seo*.php"]
+    seo["seo/*.md<br/>Blade · seo*.php · *.md"]
+    fe["frontend/frontend-ux.md<br/>css · js · Blade"]
+    mk["marketing/marketing-copy.md<br/>*.md · *.mdx"]
+    biz["business/business-ops.md<br/>*.md · docs/"]
     proj["project .claude/rules/"]
   end
   subgraph demand["On demand"]

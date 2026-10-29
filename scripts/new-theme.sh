@@ -34,7 +34,8 @@ done
 slug="${pos[0]:-}" url="${pos[1]:-}" name="${pos[2]:-}"
 [ -n "$slug" ] && [ -n "$url" ] || die 'usage: new-theme.sh <slug> <https://site-url> ["Theme Name"] [--github] [--no-site] [--no-build] [--no-git]'
 [[ "$slug" =~ ^[a-z][a-z0-9-]*$ ]] || die "slug must be lowercase letters, digits and hyphens (got '$slug')"
-[[ "$url" =~ ^https?://[^[:space:]]+$ ]] || die "site url must start with https:// (got '$url')"
+url_re='^https?://[^:/?#[:space:]][^/?#[:space:]]*([/?#][^[:space:]]*)?$' # scheme, a real host, then optional path/query/fragment
+[[ "$url" =~ $url_re ]] || die "site url must be an HTTP(S) URL with a host (got '$url')"
 url="${url%/}"
 if [ -z "$name" ]; then
   name="$(printf '%s' "$slug" | tr '-' ' ' | awk '{for(i=1;i<=NF;i++)$i=toupper(substr($i,1,1)) substr($i,2)}1')"
@@ -46,6 +47,12 @@ dest="${CODE_DIR:-$HOME/code}/$slug"
 ensure_php
 ensure_node
 have git || die "git not found"
+# Check the --github contract now, before anything is created, so a failure never leaves a half-built folder.
+if [ "$github" = 1 ]; then
+  [ "$gitinit" = 1 ] || die "--github cannot be combined with --no-git"
+  have gh || die "gh not found (scoop install gh)"
+  gh auth status >/dev/null 2>&1 || die "gh is not logged in (run: gh auth login)"
+fi
 
 edit() { sed -E "$2" "$1" >"$1.tmp" && mv "$1.tmp" "$1"; } # edit <file> <sed -E expression>
 
@@ -128,7 +135,6 @@ if [ "$gitinit" = 1 ]; then
   git commit -q -m "chore: scaffold Sage $sage_version theme with playbook template"
   say "git: initial commit on main"
   if [ "$github" = 1 ]; then
-    have gh || die "gh not found (scoop install gh)"
     gh repo create "matthummel-pa/$slug" --private --source . --remote origin --push
   fi
 fi

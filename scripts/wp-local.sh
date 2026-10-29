@@ -69,7 +69,8 @@ link_theme() { # point $link at $repo, replacing only an existing link
   if link_exists; then
     if is_windows; then
       # Directory.Delete (not recursive) removes a junction without touching its target, and refuses a real non-empty folder.
-      ps "[System.IO.Directory]::Delete('$(winpath "$link")')" >/dev/null 2>&1 || die "$link is a real folder, not a link. Move it aside first."
+      # Only a junction (reparse point) is removed; any real folder, even an empty one, is refused.
+      ps "if ((Get-Item -LiteralPath '$(winpath "$link")' -Force).Attributes -band [System.IO.FileAttributes]::ReparsePoint) { [System.IO.Directory]::Delete('$(winpath "$link")') } else { exit 1 }" >/dev/null 2>&1 || die "$link is a real folder, not a link. Move it aside first."
     else
       [ -L "$link" ] || die "$link is a real folder, not a link. Move it aside first."
       rm "$link"
@@ -124,7 +125,11 @@ case "$cmd" in
       studio_in create --path "$site" --php 8.3
     fi
     link_theme
-    studio_in wp theme activate "$theme" || echo "Could not activate '$theme'. Studio may not follow the link; see 'status'." >&2
+    if ! studio_in wp theme activate "$theme"; then
+      # If WP-CLI can see the theme, activation really failed; only an invisible theme is the link problem.
+      if studio_in wp theme list --field=name | tr -d '\r' | grep -qx "$theme"; then die "Could not activate '$theme'."; fi
+      echo "Could not activate '$theme'. Studio may not follow the link; see 'status'." >&2
+    fi
     studio_in wp rewrite structure '/%postname%/' >/dev/null || true
     if ! studio_in wp theme list --field=name | tr -d '\r' | grep -qx "$theme"; then
       echo "warning: Studio cannot see '$theme' through the link. For the direct-clone fallback, see Gotchas in the sage-project skill." >&2
@@ -162,7 +167,17 @@ case "$cmd" in
     have gh || die "gh not found (scoop install gh), then gh auth login"
     case "$name" in */*) full="$name" ;; *) full="matthummel-pa/$name" ;; esac
     target="$code_dir/${full##*/}"
-    if [ -d "$target/.git" ]; then say "$target already cloned"; else gh repo clone "$full" "$target"; fi
+    if [ -d "$target/.git" ]; then
+      # Reuse an existing checkout only if it is the repo that was asked for (owner names are case-insensitive).
+      origin="$(git -C "$target" remote get-url origin 2>/dev/null | tr '[:upper:]' '[:lower:]' || true)"
+      want="$(printf '%s' "$full" | tr '[:upper:]' '[:lower:]')"
+      case "$origin" in
+        *"/$want" | *"/$want.git" | *":$want" | *":$want.git") say "$target already cloned" ;;
+        *) die "$target is a different repository (origin: ${origin:-none}). Move it aside or clone $full elsewhere." ;;
+      esac
+    else
+      gh repo clone "$full" "$target"
+    fi
     cd "$target"
     exec bash "$here/wp-local.sh" up
     ;;

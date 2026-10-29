@@ -103,6 +103,10 @@ prepare_theme() { # $1 = repo dir
       say "npm install"
       if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
     fi
-    if [ ! -f public/build/manifest.json ]; then say "npm run build"; npm run build; fi
+    # public/build is gitignored, so a pulled checkout can keep an old manifest. Rebuild when any build input is newer.
+    if [ ! -f public/build/manifest.json ] || [ -n "$(find resources vite.config.js tailwind.config.js theme.json package.json package-lock.json -newer public/build/manifest.json -type f -print -quit 2>/dev/null)" ]; then
+      say "npm run build"
+      npm run build
+    fi
   )
 }

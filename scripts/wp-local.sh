@@ -52,6 +52,30 @@ repo_context() {
 
 studio_in() { (cd "$site" && studio "$@"); } # Studio acts on the site in the current directory
 
+# Is $theme known to WP-CLI? Returns 0 = listed, 1 = not listed, 2 = could not list (site down, WP-CLI error).
+theme_listed() {
+  local out
+  out="$(studio_in wp theme list --field=name 2>/dev/null)" || return 2
+  if printf '%s' "$out" | tr -d '\r' | grep -qx "$theme"; then return 0; else return 1; fi
+}
+
+# Does git remote URL $1 point at <host>/<want>? Handles https, ssh:// and scp-style remotes.
+# Exact owner/repo match on the exact host, case-insensitive; "user@" and ":port" are ignored.
+origin_matches() { # $1 = remote url, $2 = host, $3 = owner/repo
+  local url host want h p
+  url="$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')"
+  host="$(printf '%s' "$2" | tr '[:upper:]' '[:lower:]')"
+  want="$(printf '%s' "$3" | tr '[:upper:]' '[:lower:]')"
+  case "$url" in
+    *://*) p="${url#*://}"; h="${p%%/*}"; p="${p#*/}" ;;
+    *:*) h="${url%%:*}"; p="${url#*:}" ;;
+    *) return 1 ;;
+  esac
+  h="${h##*@}"; h="${h%%:*}"
+  p="${p%/}"; p="${p%.git}"
+  [ "$h" = "$host" ] && [ "$p" = "$want" ]
+}
+
 # Windows links are junctions made through PowerShell (no admin rights; cmd mangles quoted paths).
 ps() { powershell.exe -NoProfile -NonInteractive -Command "$1"; }
 
@@ -127,11 +151,14 @@ case "$cmd" in
     link_theme
     if ! studio_in wp theme activate "$theme"; then
       # If WP-CLI can see the theme, activation really failed; only an invisible theme is the link problem.
-      if studio_in wp theme list --field=name | tr -d '\r' | grep -qx "$theme"; then die "Could not activate '$theme'."; fi
+      rc=0; theme_listed || rc=$?
+      [ "$rc" != 0 ] || die "Could not activate '$theme'."
+      [ "$rc" != 2 ] || die "Could not activate '$theme', and WP-CLI could not list themes either. Is the site running? Try: wp-local.sh status"
       echo "Could not activate '$theme'. Studio may not follow the link; see 'status'." >&2
     fi
     studio_in wp rewrite structure '/%postname%/' >/dev/null || true
-    if ! studio_in wp theme list --field=name | tr -d '\r' | grep -qx "$theme"; then
+    rc=0; theme_listed || rc=$?
+    if [ "$rc" = 1 ]; then
       echo "warning: Studio cannot see '$theme' through the link. For the direct-clone fallback, see Gotchas in the sage-project skill." >&2
     fi
     studio_in status
@@ -169,12 +196,10 @@ case "$cmd" in
     target="$code_dir/${full##*/}"
     if [ -d "$target/.git" ]; then
       # Reuse an existing checkout only if it is the repo that was asked for (owner names are case-insensitive).
-      origin="$(git -C "$target" remote get-url origin 2>/dev/null | tr '[:upper:]' '[:lower:]' || true)"
-      want="$(printf '%s' "$full" | tr '[:upper:]' '[:lower:]')"
-      case "$origin" in
-        *"/$want" | *"/$want.git" | *":$want" | *":$want.git") say "$target already cloned" ;;
-        *) die "$target is a different repository (origin: ${origin:-none}). Move it aside or clone $full elsewhere." ;;
-      esac
+      # `gh repo clone owner/repo` uses GH_HOST, else github.com, so that is the host the origin must be on.
+      origin="$(git -C "$target" remote get-url origin 2>/dev/null || true)"
+      if origin_matches "$origin" "${GH_HOST:-github.com}" "$full"; then say "$target already cloned"
+      else die "$target is a different repository (origin: ${origin:-none}). Move it aside or clone $full elsewhere."; fi
     else
       gh repo clone "$full" "$target"
     fi

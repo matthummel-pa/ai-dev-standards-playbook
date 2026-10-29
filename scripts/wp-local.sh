@@ -176,6 +176,9 @@ case "$cmd" in
       # A previous run may have died after creating the worktree (deps, build, link); pick up from there.
       [ "$(git -C "$tree" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" = "$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir)" ] \
         || die "$tree exists but is not a worktree of this repo"
+      # feature/a and feature-a share a folder name; never point the site at the wrong branch.
+      current="$(git -C "$tree" symbolic-ref --short HEAD 2>/dev/null || true)"
+      [ "$current" = "$name" ] || die "$tree has '${current:-a detached HEAD}' checked out, not '$name' (names that differ only by / or - share a folder). Pick another branch name."
       say "Resuming existing worktree $tree"
     else
       git -C "$repo" worktree add -b "$name" "$tree"

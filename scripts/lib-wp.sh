@@ -98,7 +98,8 @@ prepare_theme() { # $1 = repo dir
   (
     cd "$1" || exit 1
     if [ ! -f vendor/autoload.php ]; then say "composer install"; composer_run install --no-interaction --prefer-dist --no-progress; fi
-    if [ ! -d node_modules ]; then
+    # npm writes node_modules/.package-lock.json last, so a bare node_modules folder is an interrupted install.
+    if [ ! -f node_modules/.package-lock.json ]; then
       say "npm install"
       if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
     fi

@@ -127,7 +127,7 @@ case "$cmd" in
     studio_in wp theme activate "$theme" || echo "Could not activate '$theme'. Studio may not follow the link; see 'status'." >&2
     studio_in wp rewrite structure '/%postname%/' >/dev/null || true
     if ! studio_in wp theme list --field=name | tr -d '\r' | grep -qx "$theme"; then
-      echo "warning: Studio cannot see '$theme' through the link. Fallback: clone the repo straight into $link" >&2
+      echo "warning: Studio cannot see '$theme' through the link. For the direct-clone fallback, see Gotchas in the sage-project skill." >&2
     fi
     studio_in status
     echo "  Hot reload: bash $here/wp-local.sh dev"
@@ -170,9 +170,16 @@ case "$cmd" in
   branch)
     name="${1:?usage: wp-local.sh branch <name>}"
     repo_context
+    [ -d "$site/wp-content" ] || die "No Studio site at $site yet. Run 'wp-local.sh up' from the main checkout first."
     tree="$(dirname "$repo")/$(basename "$repo")-${name//\//-}"
-    [ ! -e "$tree" ] || die "$tree already exists"
-    git -C "$repo" worktree add -b "$name" "$tree"
+    if [ -e "$tree" ]; then
+      # A previous run may have died after creating the worktree (deps, build, link); pick up from there.
+      [ "$(git -C "$tree" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" = "$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir)" ] \
+        || die "$tree exists but is not a worktree of this repo"
+      say "Resuming existing worktree $tree"
+    else
+      git -C "$repo" worktree add -b "$name" "$tree"
+    fi
     prepare_theme "$tree"
     cd "$tree"
     exec bash "$here/wp-local.sh" use

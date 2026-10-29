@@ -39,7 +39,6 @@ url="${url%/}"
 if [ -z "$name" ]; then
   name="$(printf '%s' "$slug" | tr '-' ' ' | awk '{for(i=1;i<=NF;i++)$i=toupper(substr($i,1,1)) substr($i,2)}1')"
 fi
-[[ "$name" != *[\|\&\\]* ]] || die "theme name cannot contain | & or \\"
 
 dest="${CODE_DIR:-$HOME/code}/$slug"
 [ ! -e "$dest" ] || die "$dest already exists"
@@ -57,7 +56,8 @@ rm -rf .git # create-project can leave history behind; this repo starts clean
 
 say "Renaming to $name ($slug)"
 sage_version="$(sed -n 's/^Version:[[:space:]]*//p' style.css | head -1 | tr -d '\r')"
-edit style.css "s|^(Theme Name:[[:space:]]+).*|\1$name|; s|^(Theme URI:[[:space:]]+).*|\1$url|; s|^(Description:[[:space:]]+).*|\1Custom Sage theme for $name.|; s|^(Version:[[:space:]]+).*|\10.1.0|; s|^(Author:[[:space:]]+).*|\1Matt Hummel|; s|^(Author URI:[[:space:]]+).*|\1https://matthummel.com|"
+e_name="$(sed_escape "$name")" e_url="$(sed_escape "$url")" # a URL like ?a=1&b=2 must stay data, not sed syntax
+edit style.css "s|^(Theme Name:[[:space:]]+).*|\1$e_name|; s|^(Theme URI:[[:space:]]+).*|\1$e_url|; s|^(Description:[[:space:]]+).*|\1Custom Sage theme for $e_name.|; s|^(Version:[[:space:]]+).*|\10.1.0|; s|^(Author:[[:space:]]+).*|\1Matt Hummel|; s|^(Author URI:[[:space:]]+).*|\1https://matthummel.com|"
 edit vite.config.js "s|base: '/app/themes/sage/public/build/'|base: '/wp-content/themes/$slug/public/build/'|"
 grep -q "/wp-content/themes/$slug/public/build/" vite.config.js || die "could not set the Vite base; Sage's vite.config.js changed"
 

@@ -9,5 +9,5 @@ Follow the `sage-project` skill. Run `bash ~/code/ai-dev-standards-playbook/scri
 
 1. No argument: run `status`. If the site isn't running, run `up`.
 2. `dev` is long-running: start it in the background and report the URL. Don't poll it.
-3. If a command fails, run `doctor` once, fix what it names, retry once. Report the exact error if it still fails.
+3. If a command fails, keep the exact error text. Run `doctor` once, fix what it names, retry once. `branch` is safe to retry: it resumes the worktree it already created. Report the original error if it still fails.
 4. Reply with the site URL and what the theme folder points to.

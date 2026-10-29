@@ -15,8 +15,7 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-playbook="$(cd "$here/.." && pwd)"
-# shellcheck source=lib-wp.sh
+# shellcheck source=/dev/null
 . "$here/lib-wp.sh"
 
 github=0 site=1 build=1 gitinit=1 pos=()
@@ -92,7 +91,9 @@ say "Adding the playbook project template"
 bash "$here/new-project.sh" "$slug" "$url" >/dev/null
 edit CLAUDE.md "s|^TODO: one line on the stack.*|Sage $sage_version (Roots), Blade, Tailwind v4, Vite, Acorn, PHP 8.3. Repo root = theme folder \`$slug\`.|"
 edit CLAUDE.md "s|Owner: TODO\.|Owner: Matt Hummel.|"
+# shellcheck disable=SC2016 # backticks are literal Markdown, not command substitution
 edit CLAUDE.md 's|PHP style: TODO \(`vendor/bin/pint` or `phpcs`\)|PHP style: `vendor/bin/pint`|'
+# shellcheck disable=SC2016
 edit CLAUDE.md 's|^- Local WP: TODO.*|- Local WP: `bash ~/code/ai-dev-standards-playbook/scripts/wp-local.sh up` (WordPress Studio). After Blade edits: `wp-local.sh clear`. HMR: `wp-local.sh dev`.|'
 
 cat >README.md <<EOF

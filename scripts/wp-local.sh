@@ -23,7 +23,7 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=lib-wp.sh
+# shellcheck source=/dev/null
 . "$here/lib-wp.sh"
 
 if [ "${1:-}" = "-C" ]; then cd "${2:?-C needs a directory}"; shift 2; fi

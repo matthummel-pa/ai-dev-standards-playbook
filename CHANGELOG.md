@@ -2,6 +2,11 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.4.1] - 2026-10-30
+
+### Added
+- `skills/doc-references`: Freemius Help Center (https://freemius.com/help/) as the reference for plugin/theme monetization; `freemius.com` added to the project template's `WebFetch` allowlist.
+
 ## [1.4.0] - 2026-10-25
 
 ### Added

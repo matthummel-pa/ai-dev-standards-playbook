@@ -58,13 +58,13 @@ flowchart LR
 | Area | What you get | Loads |
 | --- | --- | --- |
 | 📐 **Rules** `rules/` | `core.md` (always on, < 1 KB) · WordPress standards, stack and review rules · Sage/Roots conventions · frontend/UX · SEO, GEO and analytics · marketing copy · business ops | By file path |
-| 🧠 **Skills** `skills/` | `doc-references` · `content-writer` · `growth-design` · `portfolio-seo` · `geo-blog-post` · `sage-architecture` | When Claude uses them |
-| ⌨️ **Commands** `commands/pb/` | `/pb:new-project` · `/pb:plan` · `/pb:fix` · `/pb:review` · `/pb:ship` | When you type them |
+| 🧠 **Skills** `skills/` | `doc-references` · `content-writer` · `growth-design` · `portfolio-seo` · `geo-blog-post` · `sage-architecture` · `sage-project` | When Claude uses them |
+| ⌨️ **Commands** `commands/pb/` | `/pb:new-theme` · `/pb:dev` · `/pb:new-project` · `/pb:plan` · `/pb:fix` · `/pb:review` · `/pb:ship` | When you type them |
 | 🕵️ **Agent** `agents/` | `wp-reviewer` — senior WordPress/Sage review of a diff before a PR | On request / proactively |
 | 🪝 **Hook** `hooks/` | `phpcs-on-edit.sh` — runs PHPCS on every PHP file Claude edits and feeds errors back | After every edit |
 | 📁 **Project template** `templates/project/` | `CLAUDE.md`, `.claude/settings.json` (permissions + WebFetch allowlist), GitHub Actions deploy over SSH with health check and auto-rollback, setup scripts | Copied into each repo |
 | 📖 **Guides** `playbook/` | Automated ship workflow · Token discipline · Rules architecture | Read by humans |
-| 🛠 **Scripts** `scripts/` | `install.sh` · `sync.sh` · `new-project.sh` · `validate.py` · `build-docs.py` | Run by you / CI |
+| 🛠 **Scripts** `scripts/` | `install.sh` · `sync.sh` · `new-theme.sh` · `wp-local.sh` · `new-project.sh` · `validate.py` · `build-docs.py` | Run by you / CI |
 | 🌐 **Docs site** `docs/` | Generated from the live rules, skills, commands and agents → [matthummel-pa.github.io/ai-dev-standards-playbook](https://matthummel-pa.github.io/ai-dev-standards-playbook/) | On every merge |
 
 <details>
@@ -79,6 +79,7 @@ flowchart LR
 | `portfolio-seo` | Writing or auditing portfolio, service or project pages. |
 | `geo-blog-post` | Drafting a blog post for Google AI Overviews and LLM search (BLUF, E-E-A-T, FAQ, Article JSON-LD). |
 | `sage-architecture` | Adding ACF fields in PHP, Customizer settings, dark-mode defaults, the Tailwind/theme.json token bridge, or deploy workflows. |
+| `sage-project` | Starting a new Sage theme, or cloning/running/branching an existing theme repo locally with WordPress Studio and Vite. |
 
 </details>
 
@@ -88,6 +89,8 @@ flowchart LR
 
 | Command | What it does |
 | --- | --- |
+| `/pb:new-theme <slug> <url> ["Name"]` | Scaffolds a new Sage 11 theme repo (Vite, Tailwind v4, project template), builds it, and starts its local Studio site. |
+| `/pb:dev [up \| dev \| get \| branch \| use \| clear \| doctor]` | Runs or edits a theme repo locally: Studio site, theme link, Vite hot reload, a worktree per branch. |
 | `/pb:new-project [slug] [url]` | Copies the project template into the current repo without overwriting anything. |
 | `/pb:plan <what>` | Plans a large change before coding. |
 | `/pb:fix <what>` | Fixes a bug or makes a small change end to end, then ships it. |
@@ -110,13 +113,13 @@ rules/                 Path-scoped rules → ~/.claude/rules/playbook/
   sage/                  Sage/Roots conventions               (app/, resources/, vite.config.js)
   seo/                   AI-search / GEO, SEO and analytics   (Blade, seo*.php, *.mdx, *.md)
 skills/                On-request skills → ~/.claude/skills/<name>/
-commands/pb/           Slash commands → /pb:ship /pb:fix /pb:plan /pb:review /pb:new-project
+commands/pb/           Slash commands → /pb:ship /pb:fix /pb:plan /pb:review /pb:new-project /pb:new-theme /pb:dev
 agents/                Subagents (wp-reviewer)
 hooks/                 Hook scripts (PHPCS on edit)
 templates/project/     Drop-in kit: CLAUDE.md, settings, SSH deploy + rollback
 playbook/              Guides: ship workflow, token discipline, rules architecture
 docs/                  Docs site source (template + assets); index.html is built in CI
-scripts/               install, sync, new-project, validate, build-docs
+scripts/               install, sync, new-project, new-theme, wp-local, validate, build-docs
 ```
 
 </details>

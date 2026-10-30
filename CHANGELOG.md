@@ -2,6 +2,17 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.4.0] - 2026-10-25
+
+### Added
+- `skills/sage-project`: start a new Sage 11 theme, or clone, run and branch an existing theme repo locally with WordPress Studio and Vite.
+- `scripts/new-theme.sh` (`/pb:new-theme`): `composer create-project roots/sage`, rename, Vite `base` set to `/wp-content/themes/<slug>/public/build/`, project template, install, build, first commit. `--github` creates a private repo; `--no-site` skips Studio.
+- `scripts/wp-local.sh` (`/pb:dev`): `doctor`, `up`, `down`, `status`, `use`, `dev`, `clear`, `wp`, `list`, `get <repo>`, `branch <name>`. One Studio site per theme folder; the repo is linked in (junction on Windows), and `branch` makes a worktree per branch and repoints the site at it.
+- `scripts/lib-wp.sh`: shared checks. Writes a private `php.ini` when PHP lacks openssl, mbstring, curl, zip or fileinfo (scoop), without touching the global config.
+
+### Fixed
+- `scripts/new-project.sh` exited 1 when no template file was skipped, which broke any caller using `set -e`.
+
 ## [1.3.0] - 2026-10-24
 
 ### Added

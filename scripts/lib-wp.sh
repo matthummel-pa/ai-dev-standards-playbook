@@ -97,9 +97,16 @@ prepare_theme() { # $1 = repo dir
   ensure_node
   (
     cd "$1" || exit 1
-    if [ ! -f vendor/autoload.php ]; then say "composer install"; composer_run install --no-interaction --prefer-dist --no-progress; fi
+    # Composer does not rewrite autoload.php when nothing changed, so compare composer.lock with a copy
+    # recorded after the last successful install (a timestamp check would reinstall on every run).
+    if [ ! -f vendor/autoload.php ] || { [ -f composer.lock ] && ! cmp -s composer.lock vendor/.composer.lock.installed; }; then
+      say "composer install"
+      composer_run install --no-interaction --prefer-dist --no-progress
+      if [ -f composer.lock ]; then cp composer.lock vendor/.composer.lock.installed; fi
+    fi
     # npm writes node_modules/.package-lock.json last, so a bare node_modules folder is an interrupted install.
-    if [ ! -f node_modules/.package-lock.json ]; then
+    # A package.json or package-lock.json newer than that marker means the manifests changed (e.g. after a pull).
+    if [ ! -f node_modules/.package-lock.json ] || [ package.json -nt node_modules/.package-lock.json ] || [ package-lock.json -nt node_modules/.package-lock.json ]; then
       say "npm install"
       if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
     fi

@@ -47,6 +47,7 @@
       "WebFetch(domain:developer.wordpress.org)",
       "WebFetch(domain:make.wordpress.org)",
       "WebFetch(domain:roots.io)",
+      "WebFetch(domain:freemius.com)",
       "WebFetch(domain:tailwindcss.com)",
       "WebFetch(domain:vite.dev)",
       "WebFetch(domain:wpbones.com)",

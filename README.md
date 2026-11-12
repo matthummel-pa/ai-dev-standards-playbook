@@ -2,14 +2,14 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
-    <img src="docs/assets/banner-light.svg" alt="AI Dev Standards & Playbook — rules, skills and commands that teach Claude Code how to build WordPress and front-end projects" width="100%">
+    <img src="docs/assets/banner-light.svg" alt="Cursor Playbook — rules, skills and commands that teach Cursor how to build WordPress and front-end projects" width="100%">
   </picture>
 </p>
 
 <p align="center">
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml"><img alt="Validate" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml/badge.svg"></a>
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml"><img alt="Docs site" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml/badge.svg"></a>
-  <a href="VERSION"><img alt="Version 1.2.1" src="https://img.shields.io/badge/version-1.2.1-0a66c2"></a>
+  <a href="VERSION"><img alt="Version 1.5.0" src="https://img.shields.io/badge/version-1.5.0-0a66c2"></a>
   <a href="#contribute"><img alt="Public, generic standards" src="https://img.shields.io/badge/standards-generic%20%26%20public-0f766e"></a>
 </p>
 
@@ -27,9 +27,9 @@
 
 ---
 
-**One repo that teaches Claude Code how I build WordPress and front-end projects, and keeps every machine in sync.**
+**The Cursor playbook for how I build WordPress and front-end projects, kept in sync on every machine.**
 
-Coding standards, SEO rules, writing voice, reference docs, slash commands, a reviewer agent and a drop-in deploy kit. Install once; every merge to `main` updates every Claude Code session automatically.
+Coding standards, SEO rules, writing voice, reference docs, slash commands, a reviewer agent and a drop-in deploy kit. Install the plugin once. `scripts/sync.sh` refreshes `~/.cursor` after every merge to `main`.
 
 Maintained by [Matt Hummel](https://matthummel.com), full-stack & WordPress developer in Gettysburg, PA.
 
@@ -42,12 +42,12 @@ Every always-on instruction costs tokens in every session, and standards that li
 | --- | --- |
 | 📍 **One source of truth** | How work gets done — standards, security, SEO, voice — in one place, for every project. |
 | 🪶 **Loads only what's needed** | One 0.9 KB core rule is always on. Everything else loads by file path or when a skill is used. |
-| 🔁 **Auto-updates** | A SessionStart hook pulls `main` and re-installs on every new Claude Code session. |
+| 🔁 **Auto-updates** | `scripts/sync.sh` pulls `main` and re-installs rules and skills into `~/.cursor`. |
 | 🔓 **Public and generic** | No hosts, logins, client names or product data. Project facts stay in each project's `CLAUDE.md`. |
 
 ```mermaid
 flowchart LR
-  A[PR merged to main] --> B[SessionStart hook<br/>scripts/sync.sh] --> C[~/.claude<br/>rules · skills · commands · agents · hooks] --> D[Claude Code]
+  A[PR merged to main] --> B[scripts/sync.sh] --> C[~/.cursor<br/>rules · skills] --> D[Cursor plugin]
   style A fill:#0a66c2,color:#fff,stroke:none
   style D fill:#0f766e,color:#fff,stroke:none
 ```
@@ -59,7 +59,7 @@ flowchart LR
 | --- | --- | --- |
 | 📐 **Rules** `rules/` | `core.md` (always on, < 1 KB) · WordPress standards, stack and review rules · Sage/Roots conventions · frontend/UX · SEO, GEO and analytics · marketing copy · business ops | By file path |
 | 🧠 **Skills** `skills/` | `doc-references` · `content-writer` · `growth-design` · `portfolio-seo` · `geo-blog-post` · `sage-architecture` · `sage-project` | When Claude uses them |
-| ⌨️ **Commands** `commands/pb/` | `/pb:new-theme` · `/pb:dev` · `/pb:new-project` · `/pb:plan` · `/pb:fix` · `/pb:review` · `/pb:ship` | When you type them |
+| ⌨️ **Commands** `commands/pb/` | `/pb-new-theme` · `/pb-dev` · `/pb-new-project` · `/pb-plan` · `/pb-fix` · `/pb-review` · `/pb-ship` | When you type them |
 | 🕵️ **Agent** `agents/` | `wp-reviewer` — senior WordPress/Sage review of a diff before a PR | On request / proactively |
 | 🪝 **Hook** `hooks/` | `phpcs-on-edit.sh` — runs PHPCS on every PHP file Claude edits and feeds errors back | After every edit |
 | 📁 **Project template** `templates/project/` | `CLAUDE.md`, `.claude/settings.json` (permissions + WebFetch allowlist), GitHub Actions deploy over SSH with health check and auto-rollback, setup scripts | Copied into each repo |
@@ -89,13 +89,13 @@ flowchart LR
 
 | Command | What it does |
 | --- | --- |
-| `/pb:new-theme <slug> <url> ["Name"]` | Scaffolds a new Sage 11 theme repo (Vite, Tailwind v4, project template), builds it, and starts its local Studio site. |
-| `/pb:dev [up \| dev \| get \| branch \| use \| clear \| doctor]` | Runs or edits a theme repo locally: Studio site, theme link, Vite hot reload, a worktree per branch. |
-| `/pb:new-project [slug] [url]` | Copies the project template into the current repo without overwriting anything. |
-| `/pb:plan <what>` | Plans a large change before coding. |
-| `/pb:fix <what>` | Fixes a bug or makes a small change end to end, then ships it. |
-| `/pb:review [PR]` | Senior WordPress/Sage review of the current branch or a PR. |
-| `/pb:ship` | Runs checks, commits, pushes and opens a PR with auto-merge. |
+| `/pb-new-theme <slug> <url> ["Name"]` | Scaffolds a new Sage 11 theme repo (Vite, Tailwind v4, project template), builds it, and starts its local Studio site. |
+| `/pb-dev [up \| dev \| get \| branch \| use \| clear \| doctor]` | Runs or edits a theme repo locally: Studio site, theme link, Vite hot reload, a worktree per branch. |
+| `/pb-new-project [slug] [url]` | Copies the project template into the current repo without overwriting anything. |
+| `/pb-plan <what>` | Plans a large change before coding. |
+| `/pb-fix <what>` | Fixes a bug or makes a small change end to end, then ships it. |
+| `/pb-review [PR]` | Senior WordPress/Sage review of the current branch or a PR. |
+| `/pb-ship` | Runs checks, commits, pushes and opens a PR with auto-merge. |
 
 </details>
 
@@ -104,7 +104,7 @@ flowchart LR
 <br>
 
 ```
-rules/                 Path-scoped rules → ~/.claude/rules/playbook/
+rules/                 Authoring source (paths:) → .cursor/rules/**/*.mdc
   core.md                the only always-on rule (< 1 KB)
   wordpress/             WordPress standards, stack, review  (*.php, theme.json, block.json)
   frontend/              Design tokens, UX states, WCAG 2.2   (css, js, Blade)
@@ -112,14 +112,16 @@ rules/                 Path-scoped rules → ~/.claude/rules/playbook/
   business/              Scopes, comms, launch, handoff       (*.md, docs/)
   sage/                  Sage/Roots conventions               (app/, resources/, vite.config.js)
   seo/                   AI-search / GEO, SEO and analytics   (Blade, seo*.php, *.mdx, *.md)
-skills/                On-request skills → ~/.claude/skills/<name>/
-commands/pb/           Slash commands → /pb:ship /pb:fix /pb:plan /pb:review /pb:new-project /pb:new-theme /pb:dev
+.cursor/rules/         Generated Cursor rules (do not edit; run scripts/export-cursor.py)
+.cursor-plugin/        Cursor plugin + marketplace manifest
+skills/                On-request skills → ~/.cursor/skills/<name>/
+commands/pb/           Slash commands → /pb-ship /pb-fix /pb-plan /pb-review /pb-new-project /pb-new-theme /pb-dev
 agents/                Subagents (wp-reviewer)
-hooks/                 Hook scripts (PHPCS on edit)
+hooks/                 PHPCS after a PHP edit (Claude Code hook; Cursor uses the plugin)
 templates/project/     Drop-in kit: CLAUDE.md, settings, SSH deploy + rollback
 playbook/              Guides: ship workflow, token discipline, rules architecture
 docs/                  Docs site source (template + assets); index.html is built in CI
-scripts/               install, sync, new-project, new-theme, wp-local, validate, build-docs
+scripts/               install, sync, export-cursor, new-project, new-theme, wp-local, validate, build-docs
 ```
 
 </details>
@@ -134,22 +136,31 @@ git clone https://github.com/matthummel-pa/ai-dev-standards-playbook.git ~/code/
 bash ~/code/ai-dev-standards-playbook/scripts/install.sh
 ```
 
-`install.sh` copies the playbook into `~/.claude` and adds one SessionStart hook to `~/.claude/settings.json` (backup kept at `settings.json.bak-playbook`). Copies, not symlinks, so it works on Windows without Developer Mode.
+In Cursor: **Customize → Plugins → Add from GitHub** and choose this repo. That is the install. The plugin loads:
+
+| Source | What Cursor runs |
+| --- | --- |
+| `.cursor/rules/**/*.mdc` | `core` on every chat; every other rule when a matching file is open |
+| `skills/` | the same skills, body only when used |
+| `commands/pb/` | `/pb-ship`, `/pb-fix`, `/pb-plan`, `/pb-review`, `/pb-new-project`, `/pb-new-theme`, `/pb-dev` |
+| `agents/wp-reviewer.md` | the Sage reviewer |
+
+`bash scripts/install.sh` also copies skills to `~/.cursor/skills/` and rules to `~/.cursor/rules/playbook/` (copies, not symlinks). Do not copy those rule files into each theme. Project facts stay in that repo's `CLAUDE.md`.
+
+Claude Code still receives a copy in `~/.claude` from the same script, including its SessionStart hook. The commands there stay `/pb:ship` and the rest. Cursor is the playbook.
 
 <a id="use"></a>
 ## 🛠 Daily use
 
 ```bash
 cd ~/code/my-theme
-claude
-/pb:new-project my-theme https://example.com
 ```
 
-Then `/pb:fix …` and `/pb:ship` for daily work.
+In Cursor: `/pb-new-project my-theme https://example.com`, then `/pb-fix …` and `/pb-ship`.
 
 ```mermaid
 flowchart LR
-  F["/pb:fix · /pb:ship"] --> P[PR opens<br/>auto-merge on] --> C[CI green] --> M[squash-merge] --> D[deploy.yml<br/>build · swap over SSH] --> H{health check}
+  F["/pb-fix · /pb-ship"] --> P[PR opens<br/>auto-merge on] --> C[CI green] --> M[squash-merge] --> D[deploy.yml<br/>build · swap over SSH] --> H{health check}
   H -- ok --> L[live]
   H -- fails --> R[auto-rollback<br/>to previous build]
   style F fill:#7c3aed,color:#fff,stroke:none
@@ -163,10 +174,11 @@ Full loop in [`playbook/automated-ship-workflow.md`](playbook/automated-ship-wor
 ## 🔁 How auto-update works
 
 1. Merge a change to `main`.
-2. The next Claude Code session anywhere runs `scripts/sync.sh`: `git pull --ff-only`, then re-copies rules, skills, commands, agents and hooks into `~/.claude`.
+2. Run `scripts/sync.sh` (or the Claude Code SessionStart hook, which calls the same script): `git pull --ff-only`, then re-copy rules and skills into `~/.cursor` and `~/.claude`.
 3. Nothing changed → silent. Something changed → one line: `Playbook rules updated to abc1234 (…)`.
+4. Regenerate Cursor rule files after editing `rules/`: `python3 scripts/export-cursor.py`. CI fails if `.cursor/rules` is stale.
 
-Rules load at session start, so a change shows up in the session **after** the one that pulled it. To apply now: `bash ~/code/ai-dev-standards-playbook/scripts/sync.sh`, then restart Claude Code.
+To apply now: `bash ~/code/ai-dev-standards-playbook/scripts/sync.sh`, then start a new Cursor chat. The plugin reads this repo, so a merged plugin update follows the next install refresh.
 
 <a id="loads"></a>
 ## 🪶 What loads when
@@ -188,7 +200,7 @@ flowchart LR
   end
   subgraph demand["On demand"]
     skills["skills/*<br/>body loads on use"]
-    cmds["/pb:* commands<br/>only when typed"]
+    cmds["/pb-* commands<br/>only when typed"]
     agent["wp-reviewer agent"]
   end
   always --> path --> demand
@@ -199,14 +211,14 @@ flowchart LR
 
 | Layer | Where | Loads | Use for |
 | --- | --- | --- | --- |
-| Core rule | `~/.claude/rules/playbook/core.md` | Every session | 5–10 lines true everywhere |
-| Path rules | `~/.claude/rules/playbook/**` with `paths:` | When a matching file is read or edited | Coding standards per file type |
-| Skills | `~/.claude/skills/<name>/SKILL.md` | Description always; body on use | Long playbooks |
-| Commands | `~/.claude/commands/pb/*.md` | When typed | Repeatable workflows |
+| Core rule | `.cursor/rules/core.mdc` | Every session | 5–10 lines true everywhere |
+| Path rules | `.cursor/rules/**/*.mdc` with `globs` | When a matching file is in context | Coding standards per file type |
+| Skills | `skills/<name>/SKILL.md` | Description always; body on use | Long playbooks |
+| Commands | `commands/pb/*.md` | When you type `/pb-…` | Repeatable workflows |
 | Project `CLAUDE.md` | Repo root | Every session in that repo | Project facts, commands, hard no's |
-| Project rules | Repo `.claude/rules/` | By path in that repo | Private infra and product details |
+| Project rules | Repo `.cursor/rules/` | By path in that repo | Private infra and product details |
 
-**Rule of thumb:** true everywhere and one line → core · about a file type → path rule · a procedure → skill · triggered on purpose → command · names a host, path or client → the project repo, never here. Details in [`playbook/rules-architecture.md`](playbook/rules-architecture.md).
+**Rule of thumb:** true everywhere and one line → core · about a file type → path rule · a procedure → skill · triggered on purpose → command · names a host, path or client → the project repo, never here. Edit `rules/*.md`, then run `scripts/export-cursor.py`. Details in [`playbook/rules-architecture.md`](playbook/rules-architecture.md).
 
 <a id="changes"></a>
 ## 🆕 What's new
@@ -215,6 +227,7 @@ Full history in [`CHANGELOG.md`](CHANGELOG.md).
 
 | Version | Highlights |
 | --- | --- |
+| **1.5.0** | This is the Cursor playbook: plugin, generated `.mdc` rules, `/pb-*` commands, `wp-reviewer`. `sync.sh` fills `~/.cursor`. |
 | **1.2.1** | README redesign: banner, badges, section nav, mermaid diagrams, collapsible reference tables, footer. |
 | **1.2.0** | GitHub Pages docs site generated from the live rules, skills, commands and agents (`scripts/build-docs.py`). |
 | **1.1.0** | `doc-references` skill (canonical docs for the whole stack + verify-before-coding rule); `WebFetch` allowlist in the project `settings.json`. |
@@ -242,7 +255,7 @@ This repo is public and holds **generic** standards only. Hosts, paths, plugin n
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/issues">Issues</a> ·
   <a href="https://matthummel.com">matthummel.com</a>
   <br><br>
-  <sub>Built for <a href="https://claude.com/claude-code">Claude Code</a> · WordPress · Sage/Bedrock · Tailwind CSS v4 · GitHub Actions</sub>
+  <sub>Built for <a href="https://cursor.com">Cursor</a> · WordPress · Sage/Bedrock · Tailwind CSS v4 · GitHub Actions</sub>
   <br>
   <a href="#top">↑ Back to top</a>
 </p>

@@ -9,8 +9,8 @@ Two scripts in the playbook repo do the work. Run them; don't re-type their step
 
 | Need | Command |
 | --- | --- |
-| New theme repo | `bash ~/code/ai-dev-standards-playbook/scripts/new-theme.sh <slug> <https://site> ["Theme Name"]` (or `/pb:new-theme`) |
-| Anything local | `bash ~/code/ai-dev-standards-playbook/scripts/wp-local.sh <command>` (or `/pb:dev`) |
+| New theme repo | `bash ~/code/ai-dev-standards-playbook/scripts/new-theme.sh <slug> <https://site> ["Theme Name"]` (or `/pb-new-theme`) |
+| Anything local | `bash ~/code/ai-dev-standards-playbook/scripts/wp-local.sh <command>` (or `/pb-dev`) |
 
 `wp-local.sh` commands: `doctor` · `up` · `down` · `status` · `use` · `dev` · `clear` · `wp …` · `list` · `get <repo>` · `branch <name>`. Run `help` for the one-line meanings.
 

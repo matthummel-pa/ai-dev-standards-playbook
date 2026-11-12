@@ -53,7 +53,24 @@ for p in ROOT.rglob("*"):
             if re.search(pat, text, re.I):
                 errors.append(f"{p.relative_to(ROOT)}: matches private pattern /{pat}/")
 
+plugin = ROOT / ".cursor-plugin" / "plugin.json"
+version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+if plugin.is_file():
+    import json
+    manifest = json.loads(plugin.read_text(encoding="utf-8"))
+    if manifest.get("version") != version:
+        errors.append(f".cursor-plugin/plugin.json version {manifest.get('version')!r} != VERSION {version!r}")
+    for key in ("rules", "skills", "commands", "agents"):
+        target = ROOT / manifest.get(key, "")
+        if not target.exists():
+            errors.append(f".cursor-plugin/plugin.json {key} path does not exist: {manifest.get(key)}")
+
 if errors:
     print("\n".join(errors))
     sys.exit(1)
+
+import subprocess
+check = subprocess.run([sys.executable, str(ROOT / "scripts" / "export-cursor.py"), "--check"])
+if check.returncode != 0:
+    sys.exit(check.returncode)
 print("Playbook OK")

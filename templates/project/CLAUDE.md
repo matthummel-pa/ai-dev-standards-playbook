@@ -1,13 +1,14 @@
 # {{PROJECT_NAME}} — agent brief
 
-<!-- Keep this file under ~2 KB. Shared standards load from the ai-dev-standards-playbook
-     (~/.claude/rules/playbook, skills, /pb:* commands). Put only project facts here. -->
+<!-- Keep this file under ~2 KB. Shared standards come from the Cursor playbook plugin
+     (rules, skills, /pb-ship /pb-fix /pb-plan /pb-review /pb-new-project /pb-new-theme /pb-dev).
+     Put only project facts here. Do not copy the rule files into this repo. -->
 
 TODO: one line on the stack (e.g. Sage 11, Blade, PHP 8.3, Tailwind v4, Vite). Repo root = theme folder `{{THEME_SLUG}}`.
 Production: {{SITE_URL}}. Owner: TODO.
 
 ## How work ships
-branch → PR (`/pb:ship`) → checks green → auto-merge (squash) → `deploy.yml` builds and swaps the theme over SSH →
+branch → PR (`/pb-ship`) → checks green → auto-merge (squash) → `deploy.yml` builds and swaps the theme over SSH →
 health check → auto-rollback if unhealthy. Roll back by hand: Actions → Deploy → Run workflow with an older SHA.
 
 ## Commands

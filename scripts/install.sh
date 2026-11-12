@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# One-time setup. Run in Git Bash (Windows), WSL or macOS:
+# One-time setup for the Cursor playbook. Run in Git Bash (Windows), WSL or macOS:
 #   git clone https://github.com/matthummel-pa/ai-dev-standards-playbook.git ~/code/ai-dev-standards-playbook
 #   bash ~/code/ai-dev-standards-playbook/scripts/install.sh
-# 1. Copies the playbook into ~/.claude (scripts/sync.sh).
-# 2. Adds a SessionStart hook to ~/.claude/settings.json so every new Claude Code session
-#    pulls the latest playbook and re-installs it when it changed.
+# 1. Copies rules and skills into ~/.cursor, and the Claude Code copy into ~/.claude (scripts/sync.sh).
+# 2. Adds a SessionStart hook to ~/.claude/settings.json so a Claude Code session still
+#    pulls the latest playbook. Cursor itself loads the plugin from this repo.
 set -euo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -53,5 +53,8 @@ else
   exit 1
 fi
 
-echo "Installed. Backup of your settings: $settings.bak-playbook"
-echo "New Claude Code sessions now pull this repo and refresh ~/.claude automatically."
+echo "Installed. Backup of your Claude settings: $settings.bak-playbook"
+echo "Cursor skills: ${CURSOR_CONFIG_DIR:-$HOME/.cursor}/skills"
+echo "Cursor rules:  ${CURSOR_CONFIG_DIR:-$HOME/.cursor}/rules/playbook"
+echo "For every project: Customize → Plugins → Add from GitHub → this repo."
+echo "Claude Code still refreshes ~/.claude from the SessionStart hook."

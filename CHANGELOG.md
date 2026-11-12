@@ -2,6 +2,20 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.5.0] - 2026-11-12
+
+### Added
+- This repo is the Cursor playbook. Plugin (`.cursor-plugin/plugin.json` and `marketplace.json`), generated `.mdc` rules, `/pb-*` commands and the `wp-reviewer` agent install from this repo. Claude Code still receives a copy in `~/.claude`.
+- `scripts/export-cursor.py`: writes `.cursor/rules/**/*.mdc` from `rules/` (`paths` → `globs`; only `core.md` is always on). `validate.py` fails when the copy is stale or the plugin version drifts from `VERSION`.
+- `scripts/sync.sh` and `install.sh` also copy skills to `~/.cursor/skills/` and the generated rules to `~/.cursor/rules/playbook/`.
+
+### Fixed
+- `scripts/sync.sh` honors `--force` when it is passed after `--no-pull` (`install.sh` does that).
+
+### Changed
+- Each `/pb:*` command has a Cursor `name` (`pb-ship`, `pb-fix`, `pb-plan`, `pb-review`, `pb-new-project`, `pb-new-theme`, `pb-dev`). Claude Code still uses the `/pb:` names.
+- Project template `CLAUDE.md` points Cursor at the plugin instead of a second copy of the rules.
+
 ## [1.4.0] - 2026-10-25
 
 ### Added

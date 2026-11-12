@@ -11,7 +11,7 @@ Security (escape, sanitize, nonces, `$wpdb->prepare`) lives in `wp-review.md`. T
 
 ## Coding standards
 - Follow https://developer.wordpress.org/coding-standards/wordpress-coding-standards/. `phpcs` (config: `phpcs.xml.dist`) must report 0 errors on PHP files you touched. Pint owns formatting; WPCS owns security, i18n and WP API usage.
-- In Claude Code, a hook runs phpcs after every PHP edit. Fix what it reports.
+- When the playbook hook is installed, it runs phpcs after a PHP edit. Fix what it reports.
 - Never add `phpcs:ignore` without a comment saying why.
 
 ## i18n

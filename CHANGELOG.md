@@ -2,6 +2,11 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.6.1] - 2026-11-12
+
+### Changed
+- Local theme work runs on your PC with WordPress Studio. Cloud agents still run checks on Linux.
+
 ## [1.6.0] - 2026-11-12
 
 ### Added

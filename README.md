@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml"><img alt="Validate" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml/badge.svg"></a>
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml"><img alt="Docs site" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml/badge.svg"></a>
-  <a href="VERSION"><img alt="Version 1.5.0" src="https://img.shields.io/badge/version-1.5.0-0a66c2"></a>
+  <a href="VERSION"><img alt="Version 1.6.0" src="https://img.shields.io/badge/version-1.6.0-0a66c2"></a>
   <a href="#contribute"><img alt="Public, generic standards" src="https://img.shields.io/badge/standards-generic%20%26%20public-0f766e"></a>
 </p>
 
@@ -58,7 +58,7 @@ flowchart LR
 | Area | What you get | Loads |
 | --- | --- | --- |
 | 📐 **Rules** `rules/` | `core.md` (always on, < 1 KB) · WordPress standards, stack and review rules · Sage/Roots conventions · frontend/UX · SEO, GEO and analytics · marketing copy · business ops | By file path |
-| 🧠 **Skills** `skills/` | `doc-references` · `content-writer` · `growth-design` · `portfolio-seo` · `geo-blog-post` · `sage-architecture` · `sage-project` | When Claude uses them |
+| 🧠 **Skills** `skills/` | `doc-references` · `content-writer` · `growth-design` · `portfolio-seo` · `geo-blog-post` · `sage-architecture` · `sage-project` · `theme-baseline` · `token-discipline` | When the task needs them |
 | ⌨️ **Commands** `commands/pb/` | `/pb-new-theme` · `/pb-dev` · `/pb-new-project` · `/pb-plan` · `/pb-fix` · `/pb-review` · `/pb-ship` | When you type them |
 | 🕵️ **Agent** `agents/` | `wp-reviewer` — senior WordPress/Sage review of a diff before a PR | On request / proactively |
 | 🪝 **Hook** `hooks/` | `phpcs-on-edit.sh` — runs PHPCS on every PHP file Claude edits and feeds errors back | After every edit |

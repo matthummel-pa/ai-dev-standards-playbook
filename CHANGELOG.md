@@ -2,6 +2,16 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.6.0] - 2026-11-12
+
+### Added
+- `skills/token-discipline`: one task, named files, CI for checks, so a session spends fewer credits.
+- `skills/theme-baseline`: local Studio on a Mac, checks on Linux, and an SSH deploy to the live site. A theme sold as a zip keeps that release.
+- `scripts/cloud-install.sh`: PHP 8.3, Composer, and WP-CLI for a cloud agent. It does not install WordPress.
+
+### Changed
+- The project deploy job is named Deploy over SSH.
+
 ## [1.5.0] - 2026-11-12
 
 ### Added

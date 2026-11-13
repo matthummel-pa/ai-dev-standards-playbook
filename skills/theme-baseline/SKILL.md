@@ -9,7 +9,7 @@ Shared standards come from the Cursor playbook plugin. Do not paste playbook rul
 
 ## Local
 
-On a Mac, use WordPress Studio and `scripts/wp-local.sh`. Never run plain `wp` against a Studio site. After a Blade change, run `view:clear`.
+On your PC, use WordPress Studio and `scripts/wp-local.sh`. Never run plain `wp` against a Studio site. After a Blade change, run `view:clear`.
 
 On this Linux environment, PHP, Composer, Node, and WP-CLI are installed. WordPress Studio is not. Run pint, phpcs, and `npm run build` here. Do not install a second WordPress unless the task asks.
 

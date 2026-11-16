@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Idempotent toolchain for a WordPress agent: PHP 8.3, Composer, WP-CLI.
-# Node 22 is already on the image. Does not install or start WordPress.
+# Call this from a cloud environment install script, not from a chat.
+# Node 22 is already on the image. Front-end-only repos do not need this script.
+# Does not install or start WordPress. Pint and PHPCS come from the project's composer install.
 set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive

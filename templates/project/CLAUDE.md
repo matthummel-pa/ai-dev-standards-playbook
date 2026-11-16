@@ -22,5 +22,10 @@ health check → auto-rollback if unhealthy. Roll back by hand: Actions → Depl
 ## Reference docs
 Official sources and the verify-before-coding rule: `doc-references` skill (playbook). Project-specific docs: TODO.
 
+## Cursor Cloud specific instructions
+Studio is not on the image. Run pint, phpcs, and `npm run build`. Do not install WordPress unless the task asks.
+PHP, Composer, and WP-CLI come from the playbook `cloud-install.sh` during the Build.
+Standards come from the playbook plugin. This file is project facts only.
+
 ## Ask first
 DNS, PHP version, production database writes, deleting content/users/plugins, spending money, secrets.

@@ -35,5 +35,5 @@ Cursor command ids: `pb-ship`, `pb-fix`, `pb-plan`, `pb-review`, `pb-new-project
 
 - User skills (`~/.cursor/skills`) and the plugin skills are the same text. If a skill shows up twice, keep the plugin and delete the `~/.cursor/skills` copy.
 - Project subagents win over personal ones with the same name.
-- User rules load with project rules; neither overrides the other, so keep them consistent.
+- User rules load with project rules. Cursor does not drop one when the other matches. When they disagree, follow the project rule for the text domain, local commands, target size, theme switch, and how the theme ships. Change a playbook rule only when the line is true for every project.
 - Commands here are namespaced (`/pb-ship`) so they never shadow a project's own `/ship`.

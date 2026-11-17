@@ -9,15 +9,32 @@ src="$repo/templates/project"
 # Escape what is special in a sed replacement (backslash, &, and the # delimiter) so values stay data.
 esc() { printf '%s' "$1" | sed -e 's/[\\&#]/\\&/g'; }
 e_name="$(esc "$name")"; e_slug="$(esc "$slug")"; e_url="$(esc "$url")"
+# A repo that already ships keeps that workflow. Do not drop the SSH kit beside it.
+has_ship=0
+for w in .github/workflows/*.yml .github/workflows/*.yaml; do
+  [ -f "$w" ] || continue
+  base="$(basename "$w")"
+  case "$base" in
+    *deploy*|*release*) has_ship=1 ;;
+  esac
+done
 skipped=()
 while IFS= read -r -d '' f; do
   rel="${f#"$src"/}"
-  if [ -e "$rel" ]; then skipped+=("$rel"); continue; fi
+  if [ -e "$rel" ]; then skipped+=("$rel|exists — merge by hand"); continue; fi
+  if [ "$has_ship" -eq 1 ]; then
+    case "$rel" in
+      .github/workflows/deploy.yml|.github/scripts/health-check.sh|.github/scripts/server-deploy.sh|tools/hostinger-secrets.sh)
+        skipped+=("$rel|repo already has a deploy workflow")
+        continue
+        ;;
+    esac
+  fi
   mkdir -p "$(dirname "$rel")"
   sed -e "s#{{PROJECT_NAME}}#$e_name#g" -e "s#{{THEME_SLUG}}#$e_slug#g" -e "s#{{SITE_URL}}#$e_url#g" "$f" > "$rel"
   case "$rel" in *.sh) chmod +x "$rel" ;; esac
   echo "added   $rel"
 done < <(find "$src" -type f -print0)
 for s in "${skipped[@]:-}"; do
-  if [ -n "$s" ]; then echo "skipped $s (exists — merge by hand)"; fi
+  if [ -n "$s" ]; then echo "skipped ${s%%|*} (${s#*|})"; fi
 done

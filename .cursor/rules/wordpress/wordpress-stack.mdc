@@ -45,6 +45,7 @@ Security lives in `wp-review.md`; coding standards, i18n, theme.json and accessi
 - Build assets in CI (GitHub Actions) or locally. Never edit files on the production server.
 - Give every release a semantic version and a changelog entry.
 - Back up the database and uploads before any deploy that touches data or plugins.
+- A repo that already has a deploy or release workflow keeps it. Do not add the SSH deploy kit beside it.
 
 ## 7. Testing and QA
 - Run PHPCS with the WordPress Coding Standards ruleset. Fix errors; justify any ignored rule in a comment.

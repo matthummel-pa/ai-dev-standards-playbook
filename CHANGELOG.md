@@ -2,6 +2,18 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.6.1] - 2026-11-16
+
+### Added
+- `playbook/cursor-environments.md`: what a cloud agent loads, and the shared Build install line.
+- `templates/project/.cursor/environment.json` runs `cloud-install.sh`, then `composer install` and `npm ci`.
+- Project template `CLAUDE.md` has a Cursor Cloud section. Studio is not on the image.
+
+### Changed
+- Project rules win on text domain, local commands, target size, theme switch, and deploy. The text domain is the project's, not `sage`.
+- `scripts/new-project.sh` does not add the SSH deploy kit when the repo already has a deploy or release workflow.
+- `scripts/cloud-install.sh` is documented as a Build install step. It still does not install WordPress.
+
 ## [1.6.0] - 2026-11-12
 
 ### Added

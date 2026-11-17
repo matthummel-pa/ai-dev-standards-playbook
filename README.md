@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml"><img alt="Validate" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml/badge.svg"></a>
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml"><img alt="Docs site" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml/badge.svg"></a>
-  <a href="VERSION"><img alt="Version 1.6.0" src="https://img.shields.io/badge/version-1.6.0-0a66c2"></a>
+  <a href="VERSION"><img alt="Version 1.6.1" src="https://img.shields.io/badge/version-1.6.1-0a66c2"></a>
   <a href="#contribute"><img alt="Public, generic standards" src="https://img.shields.io/badge/standards-generic%20%26%20public-0f766e"></a>
 </p>
 
@@ -100,7 +100,7 @@ flowchart LR
 </details>
 
 <details>
-<summary><strong>🗂 Repo layout</strong></summary>
+<summary><strong>🗜 Repo layout</strong></summary>
 <br>
 
 ```
@@ -119,7 +119,7 @@ commands/pb/           Slash commands → /pb-ship /pb-fix /pb-plan /pb-review /
 agents/                Subagents (wp-reviewer)
 hooks/                 PHPCS after a PHP edit (Claude Code hook; Cursor uses the plugin)
 templates/project/     Drop-in kit: CLAUDE.md, settings, SSH deploy + rollback
-playbook/              Guides: ship workflow, token discipline, rules architecture
+playbook/              Guides: ship workflow, token discipline, rules architecture, cloud environments
 docs/                  Docs site source (template + assets); index.html is built in CI
 scripts/               install, sync, export-cursor, new-project, new-theme, wp-local, validate, build-docs
 ```
@@ -146,6 +146,8 @@ In Cursor: **Customize → Plugins → Add from GitHub** and choose this repo. T
 | `agents/wp-reviewer.md` | the Sage reviewer |
 
 `bash scripts/install.sh` also copies skills to `~/.cursor/skills/` and rules to `~/.cursor/rules/playbook/` (copies, not symlinks). Do not copy those rule files into each theme. Project facts stay in that repo's `CLAUDE.md`.
+
+Cloud agents do not see `~/.cursor/rules`. They get these standards from the plugin, which syncs when an agent starts. The toolchain is `scripts/cloud-install.sh` in that project's Build install. Details in [`playbook/cursor-environments.md`](playbook/cursor-environments.md).
 
 Claude Code still receives a copy in `~/.claude` from the same script, including its SessionStart hook. The commands there stay `/pb:ship` and the rest. Cursor is the playbook.
 
@@ -227,6 +229,7 @@ Full history in [`CHANGELOG.md`](CHANGELOG.md).
 
 | Version | Highlights |
 | --- | --- |
+| **1.6.1** | Cloud environments: one install line, project rules win on text domain, commands, target size, and deploy. `~/.cursor/rules` stays on the laptop. |
 | **1.5.0** | This is the Cursor playbook: plugin, generated `.mdc` rules, `/pb-*` commands, `wp-reviewer`. `sync.sh` fills `~/.cursor`. |
 | **1.2.1** | README redesign: banner, badges, section nav, mermaid diagrams, collapsible reference tables, footer. |
 | **1.2.0** | GitHub Pages docs site generated from the live rules, skills, commands and agents (`scripts/build-docs.py`). |

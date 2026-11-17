@@ -27,7 +27,7 @@ alwaysApply: false
 - Provide a skip link and full keyboard navigation with a visible focus indicator.
 - Use semantic HTML first. Add ARIA only where native elements fall short.
 - Every form field has a visible label. Errors are announced and explained in plain words.
-- Touch targets are at least 24 by 24 CSS pixels; aim for 44.
+- Touch targets are at least 24 by 24 CSS pixels. When the project requires 44 by 44, use that.
 - Decorative images get an empty `alt`. Meaningful images get a description of what they show, not keywords.
 
 ## 5. Brand identity

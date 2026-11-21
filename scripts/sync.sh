@@ -51,6 +51,8 @@ replace_dir "$repo/rules"        "$dest/rules/playbook"
 replace_dir "$repo/commands/pb"  "$dest/commands/pb"
 replace_dir "$repo/agents"       "$dest/agents/playbook"
 replace_dir "$repo/hooks"        "$dest/hooks/playbook"
+# A CRLF hook script fails on its shebang.
+sed -i 's/$//' "$dest/hooks/playbook/"*.sh 2>/dev/null || true
 chmod +x "$dest/hooks/playbook/"*.sh 2>/dev/null || true
 
 # Skills sit one level deep, so remove only the ones this playbook installed last time.

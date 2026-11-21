@@ -1,6 +1,6 @@
 ---
 description: "Business operations"
-globs: "**/*.md,docs/**"
+globs: "docs/**,**/proposal*.md,**/scope*.md,**/sow*.md,**/handoff*.md,**/launch*.md,**/invoice*.md,**/client*.md,**/onboarding*.md"
 alwaysApply: false
 ---
 

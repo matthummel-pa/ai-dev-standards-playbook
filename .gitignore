@@ -7,3 +7,6 @@ node_modules/
 
 # Built by scripts/build-docs.py in CI (pages.yml); edit docs/src/template.html instead
 docs/index.html
+
+# Local review notes (private)
+reviews/

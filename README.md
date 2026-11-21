@@ -41,7 +41,7 @@ Every always-on instruction costs tokens in every session, and standards that li
 | | |
 | --- | --- |
 | 📍 **One source of truth** | How work gets done — standards, security, SEO, voice — in one place, for every project. |
-| 🪶 **Loads only what's needed** | One 0.9 KB core rule is always on. Everything else loads by file path or when a skill is used. |
+| 🪶 **Loads only what's needed** | One core rule under 1 KB is always on. Everything else loads by file path or when a skill is used. |
 | 🔁 **Auto-updates** | A SessionStart hook pulls `main` and re-installs on every new Claude Code session. |
 | 🔓 **Public and generic** | No hosts, logins, client names or product data. Project facts stay in each project's `CLAUDE.md`. |
 
@@ -59,12 +59,12 @@ flowchart LR
 | --- | --- | --- |
 | 📐 **Rules** `rules/` | `core.md` (always on, < 1 KB) · WordPress standards, stack and review rules · Sage/Roots conventions · frontend/UX · SEO, GEO and analytics · marketing copy · business ops | By file path |
 | 🧠 **Skills** `skills/` | `doc-references` · `content-writer` · `growth-design` · `portfolio-seo` · `geo-blog-post` · `sage-architecture` · `sage-project` · `theme-baseline` · `token-discipline` · `seo-improvement` · `playbook-guides` | When the task needs them |
-| ⌨️ **Commands** `commands/pb/` | `/pb:new-theme` · `/pb:dev` · `/pb:new-project` · `/pb:plan` · `/pb:fix` · `/pb:review` · `/pb:ship` | When you type them |
+| ⌨️ **Commands** `commands/pb/` | `/pb:new-theme` · `/pb:dev` · `/pb:new-project` · `/pb:blueprint` · `/pb:plan` · `/pb:fix` · `/pb:review` · `/pb:ship` | When you type them |
 | 🕵️ **Agent** `agents/` | `wp-reviewer` — senior WordPress/Sage review of a diff before a PR | On request / proactively |
 | 🪝 **Hook** `hooks/` | `phpcs-on-edit.sh` — runs PHPCS on every PHP file Claude edits and feeds errors back | After every edit |
 | 📁 **Project template** `templates/project/` | `CLAUDE.md`, `.claude/settings.json` (permissions + WebFetch allowlist), GitHub Actions deploy over SSH with health check and auto-rollback, setup scripts | Copied into each repo |
 | 📖 **Guides** `playbook/` | Automated ship workflow · Token discipline · Rules architecture | Read by humans |
-| 🛠 **Scripts** `scripts/` | `install.sh` · `sync.sh` · `new-theme.sh` · `wp-local.sh` · `new-project.sh` · `validate.py` · `build-docs.py` | Run by you / CI |
+| 🛠 **Scripts** `scripts/` | `install.sh` · `sync.sh` · `doctor.sh` · `new-theme.sh` · `wp-local.sh` · `new-project.sh` · `cloud-install.sh` · `lib-wp.sh` · `validate.py` · `build-docs.py` | Run by you / CI |
 | 🌐 **Docs site** `docs/` | Generated from the live rules, skills, commands and agents → [matthummel-pa.github.io/ai-dev-standards-playbook](https://matthummel-pa.github.io/ai-dev-standards-playbook/) | On every merge |
 
 <details>
@@ -80,6 +80,8 @@ flowchart LR
 | `geo-blog-post` | Drafting a blog post for Google AI Overviews and LLM search (BLUF, E-E-A-T, FAQ, Article JSON-LD). |
 | `sage-architecture` | Adding ACF fields in PHP, Customizer settings, dark-mode defaults, the Tailwind/theme.json token bridge, or deploy workflows. |
 | `sage-project` | Starting a new Sage theme, or cloning/running/branching an existing theme repo locally with WordPress Studio and Vite. |
+| `theme-baseline` | Setting up a theme locally, bringing one up to the shared baseline, or shipping a site you host over SSH. A theme sold as a zip keeps its release workflow. |
+| `token-discipline` | Starting work, planning a fix, or when you want fewer tokens or a cheaper model: one task, named files, CI for checks. |
 | `seo-improvement` | Auditing and fixing a WordPress site's SEO in stages, from repo and rendered-page evidence. Asks before robots, redirect, canonical or indexing changes. |
 | `playbook-guides` | Before a ship, a plan, a rules change, or when asked how standards load. Points at the three guides in `playbook/`. |
 
@@ -112,17 +114,17 @@ rules/                 Path-scoped rules → ~/.claude/rules/playbook/
   wordpress/             WordPress standards, stack, review  (*.php, theme.json, block.json)
   frontend/              Design tokens, UX states, WCAG 2.2   (css, js, Blade)
   marketing/             Voice, funnels, proof, social, email (*.md)
-  business/              Scopes, comms, launch, handoff       (*.md, docs/)
+  business/              Scopes, comms, launch, handoff       (docs/, proposal and scope files)
   sage/                  Sage/Roots conventions               (app/, resources/, vite.config.js)
   seo/                   AI-search / GEO, SEO and analytics   (Blade, seo*.php, *.mdx, *.md)
 skills/                On-request skills → ~/.claude/skills/<name>/
-commands/pb/           Slash commands → /pb:ship /pb:fix /pb:plan /pb:review /pb:new-project /pb:new-theme /pb:dev
+commands/pb/           Slash commands → /pb:ship /pb:fix /pb:plan /pb:review /pb:blueprint /pb:new-project /pb:new-theme /pb:dev
 agents/                Subagents (wp-reviewer)
 hooks/                 Hook scripts (PHPCS on edit)
 templates/project/     Drop-in kit: CLAUDE.md, settings, SSH deploy + rollback
 playbook/              Guides: ship workflow, token discipline, rules architecture
 docs/                  Docs site source (template + assets); index.html is built in CI
-scripts/               install, sync, doctor, new-project, new-theme, wp-local, validate, build-docs
+scripts/               install, sync, doctor, new-project, new-theme, wp-local, cloud-install, lib-wp, validate, build-docs
 ```
 
 </details>
@@ -167,7 +169,7 @@ Full loop in [`playbook/automated-ship-workflow.md`](playbook/automated-ship-wor
 2. The next Claude Code session anywhere runs `scripts/sync.sh`: `git pull --ff-only`, then re-copies rules, skills, commands, agents and hooks into `~/.claude`.
 3. Nothing changed → silent. Something changed → one line: `Playbook rules updated to abc1234 (…)`.
 
-Rules load at session start, so a change shows up in the session **after** the one that pulled it. To apply now: `bash ~/code/ai-dev-standards-playbook/scripts/sync.sh`, then restart Claude Code. `bash scripts/doctor.sh` checks that the install matches the repo.
+Rules load at session start, so a change shows up in the session **after** the one that pulled it. To apply now: `bash ~/code/ai-dev-standards-playbook/scripts/sync.sh`, then restart Claude Code. `bash scripts/doctor.sh` checks that the install matches the repo and reports how many bytes of rules load per file type; `doctor.sh worktrees <repo>` lists merged worktrees you can remove.
 
 <a id="loads"></a>
 ## 🪶 What loads when
@@ -220,6 +222,9 @@ Full history in [`CHANGELOG.md`](CHANGELOG.md).
 | **1.6.3** | `/pb:blueprint`, `seo-improvement` and `playbook-guides`, `scripts/doctor.sh`, LF line endings enforced, `business-ops` loads on fewer files. |
 | **1.6.2** | `doc-references` adds the Freemius Help Center; `freemius.com` joins the project template's `WebFetch` allowlist. |
 | **1.6.1** | Project rules win on text domain, commands, target size, and deploy; `new-project.sh` leaves an existing deploy workflow alone. |
+| **1.6.0** | `theme-baseline` and `token-discipline` skills; `scripts/cloud-install.sh` (PHP, Composer, WP-CLI for a cloud agent). |
+| **1.4.0** | `sage-project` skill, `/pb:new-theme` and `/pb:dev`: scaffold and run Sage 11 themes locally with WordPress Studio and Vite. |
+| **1.3.0** | Five topic rules absorbed into the playbook (stack, frontend/UX, SEO analytics, marketing, business ops); WCAG 2.2 AA everywhere. |
 | **1.2.1** | README redesign: banner, badges, section nav, mermaid diagrams, collapsible reference tables, footer. |
 | **1.2.0** | GitHub Pages docs site generated from the live rules, skills, commands and agents (`scripts/build-docs.py`). |
 | **1.1.0** | `doc-references` skill (canonical docs for the whole stack + verify-before-coding rule); `WebFetch` allowlist in the project `settings.json`. |

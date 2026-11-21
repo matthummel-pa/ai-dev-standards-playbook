@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml"><img alt="Validate" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml/badge.svg"></a>
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml"><img alt="Docs site" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml/badge.svg"></a>
-  <a href="VERSION"><img alt="Version 1.6.1" src="https://img.shields.io/badge/version-1.6.1-0a66c2"></a>
+  <a href="VERSION"><img alt="Version 1.6.2" src="https://img.shields.io/badge/version-1.6.2-0a66c2"></a>
   <a href="#contribute"><img alt="Public, generic standards" src="https://img.shields.io/badge/standards-generic%20%26%20public-0f766e"></a>
 </p>
 
@@ -229,6 +229,7 @@ Full history in [`CHANGELOG.md`](CHANGELOG.md).
 
 | Version | Highlights |
 | --- | --- |
+| **1.6.2** | `doc-references` adds the Freemius Help Center; `freemius.com` joins the project template's `WebFetch` allowlist. |
 | **1.6.1** | Cloud environments: one install line, project rules win on text domain, commands, target size, and deploy. `~/.cursor/rules` stays on the laptop. |
 | **1.5.0** | This is the Cursor playbook: plugin, generated `.mdc` rules, `/pb-*` commands, `wp-reviewer`. `sync.sh` fills `~/.cursor`. |
 | **1.2.1** | README redesign: banner, badges, section nav, mermaid diagrams, collapsible reference tables, footer. |

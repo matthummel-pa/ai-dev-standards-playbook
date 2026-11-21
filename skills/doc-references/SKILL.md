@@ -26,6 +26,7 @@ Project `.claude/settings.json` (from `templates/project/`) already allows `WebF
 | Roots (Sage, Acorn, Bedrock, Trellis) | https://roots.io/ | Sage 10/11 theme structure, Blade, Composers, `vite.config.js`, Acorn service providers. |
 | Bedrock | https://roots.io/bedrock/ | 12-factor WordPress layout, Composer-managed core/plugins, `.env`, `config/environments/`. |
 | WP Bones — WordPress environments | https://wpbones.com/docs/getting-started/wordpress-environments | Reference for how `WP_ENVIRONMENT_TYPE` / local-staging-production setups are handled. WP Bones itself is a Laravel-style **plugin** framework; it is not part of the Sage/Bedrock stack, so borrow the environment ideas, not the framework. |
+| Freemius Help Center | https://freemius.com/help/ | Monetizing a plugin or theme: SDK setup (`fs_dynamic_init`), plans and pricing, licensing, trials, free/pro builds, checkout, and the Developer Dashboard. Use it for Freemius behavior; the `wp-freemius` skill covers the common SDK patterns. |
 | Tailwind CSS | https://tailwindcss.com/ | v4 `@theme`, `@custom-variant`, `@utility`, Vite plugin. v3 `tailwind.config.js` answers are usually wrong for v4; check before answering. |
 
 ## Web platform (HTML, CSS, JS, browser support)

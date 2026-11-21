@@ -5,7 +5,7 @@ description: "Local WordPress theme development and a live SSH deploy. Use when 
 
 # Theme baseline
 
-Shared standards come from the Cursor playbook plugin. Do not paste playbook rules into the theme.
+Shared standards come from the playbook (`~/.claude`). Do not paste playbook rules into the theme.
 
 ## Local
 
@@ -15,7 +15,7 @@ On this Linux environment, PHP, Composer, Node, and WP-CLI are installed. WordPr
 
 ## What to copy from the furthest-along theme
 
-- A short `CLAUDE.md` (stack, local command, deploy, gotchas). `.cursor/rules` holds project facts.
+- A short `CLAUDE.md` (stack, local command, deploy, gotchas). `.claude/rules` holds project facts.
 - Pint, and `wp-review` in CI.
 - A separate public docs repo for support guides. The theme does not vendor the guide.
 

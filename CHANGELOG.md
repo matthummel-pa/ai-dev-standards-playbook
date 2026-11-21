@@ -2,6 +2,20 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.7.0] - 2026-11-20
+
+### Removed
+- Cursor support. The playbook is Claude Code only again: `.cursor-plugin/`, the generated `.cursor/rules/**/*.mdc`, `scripts/export-cursor.py`, `playbook/cursor-environments.md`, and `templates/project/.cursor/environment.json`.
+- `sync.sh` and `install.sh` no longer copy anything into `~/.cursor`. `validate.py` no longer checks the plugin manifest or the generated rules.
+
+### Changed
+- Commands are `/pb:ship`, `/pb:fix` and the rest again. The `/pb-*` names and the `name:` frontmatter added in 1.5.0 did not work as Claude Code commands.
+- README, docs site, banners, `rules-architecture.md`, `wp-reviewer`, `theme-baseline` and the project `CLAUDE.md` template describe the Claude Code install again. The Cursor Cloud section is gone from the template.
+- Kept from 1.5.0 to 1.6.3: `theme-baseline`, `token-discipline`, `scripts/cloud-install.sh` (PHP, Composer and WP-CLI for any cloud agent), the `new-project.sh` deploy-kit guard, and project-rules-win guidance.
+
+### Fixed
+- `sync.sh`: the CR strip for installed hooks (1.6.3) had a stray newline in its `sed` expression and did nothing.
+
 ## [1.6.3] - 2026-11-20
 
 ### Added

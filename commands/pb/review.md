@@ -1,6 +1,5 @@
 ---
 description: Senior WordPress/Sage review of the current branch or a PR (any project)
-name: pb-review
 argument-hint: "[PR number]"
 ---
 

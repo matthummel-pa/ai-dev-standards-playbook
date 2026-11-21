@@ -1,5 +1,6 @@
 ---
 description: Scaffold a new Sage 11 theme repo (Vite, Tailwind v4, playbook template) and start its local Studio site
+name: pb-new-theme
 argument-hint: "<slug> <https://site-url> [\"Theme Name\"]"
 ---
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pull the playbook and copy it into Claude Code's user config.
+# Pull the Cursor playbook and copy it into ~/.cursor (and ~/.claude, for Claude Code).
 # Runs from a SessionStart hook (silent unless something changed) or by hand.
 #   bash scripts/sync.sh            pull + install
 #   bash scripts/sync.sh --no-pull  install only
@@ -9,6 +9,9 @@
 #   commands/ → ~/.claude/commands/pb/           (/pb:ship, /pb:fix, /pb:plan, /pb:review, /pb:new-project, /pb:new-theme, /pb:dev)
 #   agents/   → ~/.claude/agents/playbook/
 #   hooks/    → ~/.claude/hooks/playbook/
+# Cursor (same revision stamp; skills mirror ~/.claude, rules mirror .cursor/rules):
+#   .cursor/rules → ~/.cursor/rules/playbook/
+#   skills/*      → ~/.cursor/skills/<name>/     (tracked in .playbook-manifest)
 set -uo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -16,7 +19,16 @@ dest="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 stamp="$dest/.playbook-version"
 manifest="$dest/.playbook-manifest"
 
-if [ "${1:-}" != "--no-pull" ]; then
+no_pull=0
+force=0
+for arg in "$@"; do
+  case "$arg" in
+    --no-pull) no_pull=1 ;;
+    --force) force=1 ;;
+  esac
+done
+
+if [ "$no_pull" -eq 0 ]; then
   # Never block a session: short timeout, fast-forward only, ignore network errors.
   if command -v timeout >/dev/null 2>&1; then
     timeout 20 git -C "$repo" pull --ff-only --quiet >/dev/null 2>&1 || true
@@ -26,7 +38,7 @@ if [ "${1:-}" != "--no-pull" ]; then
 fi
 
 head="$(git -C "$repo" rev-parse --short HEAD 2>/dev/null || echo unknown)"
-[ -f "$stamp" ] && [ "$(cat "$stamp")" = "$head" ] && [ "${1:-}" != "--force" ] && exit 0
+[ -f "$stamp" ] && [ "$(cat "$stamp")" = "$head" ] && [ "$force" -eq 0 ] && exit 0
 
 mkdir -p "$dest/rules" "$dest/skills" "$dest/commands" "$dest/agents" "$dest/hooks"
 
@@ -53,6 +65,25 @@ for dir in "$repo"/skills/*/; do
   rm -rf "${dest:?}/skills/$name"
   cp -R "$dir" "$dest/skills/$name"
   echo "$name" >> "$manifest"
+done
+
+# Cursor reads user skills from ~/.cursor/skills. Rules go to ~/.cursor/rules/playbook
+# for local mirrors. Installing the plugin (see README) is what applies them in every project.
+cursor="${CURSOR_CONFIG_DIR:-$HOME/.cursor}"
+cursor_manifest="$cursor/.playbook-manifest"
+mkdir -p "$cursor/rules" "$cursor/skills"
+replace_dir "$repo/.cursor/rules" "$cursor/rules/playbook"
+if [ -f "$cursor_manifest" ]; then
+  while IFS= read -r name; do
+    [ -n "$name" ] && rm -rf "${cursor:?}/skills/$name"
+  done < "$cursor_manifest"
+fi
+: > "$cursor_manifest"
+for dir in "$repo"/skills/*/; do
+  name="$(basename "$dir")"
+  rm -rf "${cursor:?}/skills/$name"
+  cp -R "$dir" "$cursor/skills/$name"
+  echo "$name" >> "$cursor_manifest"
 done
 
 echo "$head" > "$stamp"

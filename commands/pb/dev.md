@@ -1,5 +1,6 @@
 ---
 description: Run or edit a theme repo locally with WordPress Studio and Vite (up, dev, get, branch, use, clear, doctor)
+name: pb-dev
 argument-hint: "[up | dev | get <repo> | branch <name> | use | clear | status | down | doctor]"
 ---
 

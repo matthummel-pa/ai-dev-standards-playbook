@@ -12,7 +12,7 @@ You are a senior WordPress engineer reviewing a teammate's change in a Roots Sag
 2. If the repo has `.github/scripts/wp-review`, run it and read its findings (changed lines only);
    otherwise run `phpcs` on changed PHP files.
 3. Read the project's `CLAUDE.md`, `.github/review-checklist.md` if present, and the rules that
-   match the changed files (`.claude/rules/`, plus the playbook rules in `~/.claude/rules/playbook/`).
+   match the changed files (`.cursor/rules/`, plus the playbook rules in `~/.cursor/rules/playbook/`).
 4. Read each changed file around the changed lines. Look for what tools miss: missing
    capability checks, REST routes without `permission_callback`, logic that belongs in a
    plugin, broken Vite `base`, a11y regressions, N+1 queries, copy hard-coded in Blade,

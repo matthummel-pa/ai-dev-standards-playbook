@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Dev Standards &amp; Playbook — Docs</title>
-<meta name="description" content="How the ai-dev-standards-playbook repo teaches Claude Code: rules, skills, commands, agents, hooks and the project template, with diagrams of what loads when.">
+<title>Cursor Playbook — Docs</title>
+<meta name="description" content="How the Cursor playbook loads rules, skills, commands, agents and the project template, and what loads when.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
 <style>
   :root {
@@ -86,7 +86,7 @@
   <div class="wrap">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
-      <img class="banner" src="assets/banner-light.svg" alt="AI Dev Standards &amp; Playbook — rules, skills and commands that teach Claude Code how to build WordPress and front-end projects" width="1200" height="300">
+      <img class="banner" src="assets/banner-light.svg" alt="Cursor Playbook — rules, skills and commands that teach Cursor how to build WordPress and front-end projects" width="1200" height="300">
     </picture>
     <p class="badges">
       <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml"><img alt="Validate CI status" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml/badge.svg"></a>
@@ -94,7 +94,7 @@
       <img alt="Version {{VERSION}}" src="https://img.shields.io/badge/version-{{VERSION}}-0a66c2">
       <img alt="Generic and public standards" src="https://img.shields.io/badge/standards-generic%20%26%20public-0f766e">
     </p>
-    <p class="lede"><strong>One repo that teaches Claude Code how to build WordPress and front-end projects, and keeps every machine in sync.</strong> Coding standards, SEO rules, writing voice, reference docs, slash commands, a reviewer agent and a drop-in deploy kit. Install once; every merge to <code>main</code> updates every Claude Code session automatically.</p>
+    <p class="lede"><strong>The Cursor playbook for WordPress and front-end projects, kept in sync on every machine.</strong> Coding standards, SEO rules, writing voice, reference docs, slash commands, a reviewer agent and a drop-in deploy kit. Install the plugin once. <code>scripts/sync.sh</code> refreshes <code>~/.cursor</code> after every merge to <code>main</code>.</p>
     <p class="meta"><a href="https://github.com/matthummel-pa/ai-dev-standards-playbook">GitHub repo</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/blob/main/CHANGELOG.md">Changelog</a> · Maintained by <a href="https://matthummel.com">Matt Hummel</a>, full-stack &amp; WordPress developer, Gettysburg, PA</p>
   </div>
 </header>
@@ -124,7 +124,7 @@
     <div class="why">
       <div><strong>📍 One source of truth</strong>How work gets done — standards, security, SEO, voice — in one place, for every project.</div>
       <div><strong>🪶 Loads only what's needed</strong>One 0.9 KB core rule is always on. Everything else loads by file path or when a skill is used.</div>
-      <div><strong>🔁 Auto-updates</strong>A SessionStart hook pulls <code>main</code> and re-installs on every new Claude Code session.</div>
+      <div><strong>🔁 Auto-updates</strong><code>scripts/sync.sh</code> pulls <code>main</code> and re-installs rules and skills into <code>~/.cursor</code>.</div>
       <div><strong>🔓 Public and generic</strong>No hosts, logins, client names or product data. Project facts stay in each project's <code>CLAUDE.md</code>.</div>
     </div>
   </div>
@@ -133,29 +133,28 @@
 <section id="how">
   <div class="wrap">
     <h2>🔁 How it works</h2>
-    <p class="sub">Merge to <code>main</code>, and every Claude Code session on every machine picks it up. No manual copying, no stale rules.</p>
+    <p class="sub">Merge to <code>main</code>, then <code>scripts/sync.sh</code> refreshes Cursor on that machine. The plugin is what applies the playbook in every project.</p>
     <figure>
       <svg viewBox="0 0 1000 220" role="img" aria-labelledby="f1t f1d">
         <title id="f1t">Auto-update flow</title>
-        <desc id="f1d">A pull request merges to main on GitHub. On the next Claude Code session, a SessionStart hook runs sync.sh, which git-pulls and copies rules, skills, commands, agents and hooks into the user's ~/.claude folder. Claude Code then loads them.</desc>
+        <desc id="f1d">A pull request merges to main on GitHub. scripts/sync.sh git-pulls and copies rules and skills into ~/.cursor. The Cursor plugin loads them.</desc>
         <defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
         <rect class="box" x="20" y="60" width="200" height="100" rx="10"/>
         <text x="120" y="98" text-anchor="middle" font-weight="600">GitHub: main</text>
         <text x="120" y="124" text-anchor="middle" class="muted" font-size="14">PR merged</text>
         <path class="arrow" d="M220,110 L300,110"/>
         <rect class="box" x="300" y="60" width="200" height="100" rx="10"/>
-        <text x="400" y="92" text-anchor="middle" font-weight="600">SessionStart hook</text>
-        <text x="400" y="116" text-anchor="middle" class="muted" font-size="14">runs on every new session</text>
-        <text x="400" y="138" text-anchor="middle" class="muted" font-size="14">→ scripts/sync.sh</text>
+        <text x="400" y="92" text-anchor="middle" font-weight="600">scripts/sync.sh</text>
+        <text x="400" y="116" text-anchor="middle" class="muted" font-size="14">git pull --ff-only</text>
+        <text x="400" y="138" text-anchor="middle" class="muted" font-size="14">re-copy when changed</text>
         <path class="arrow" d="M500,110 L580,110"/>
         <rect class="box" x="580" y="60" width="200" height="100" rx="10"/>
-        <text x="680" y="92" text-anchor="middle" font-weight="600">~/.claude</text>
+        <text x="680" y="92" text-anchor="middle" font-weight="600">~/.cursor</text>
         <text x="680" y="116" text-anchor="middle" class="muted" font-size="14">rules/playbook · skills</text>
-        <text x="680" y="138" text-anchor="middle" class="muted" font-size="14">commands/pb · agents · hooks</text>
+        <text x="680" y="138" text-anchor="middle" class="muted" font-size="14">plugin reads the repo</text>
         <path class="arrow" d="M780,110 L860,110"/>
         <rect class="box" x="860" y="60" width="120" height="100" rx="10"/>
-        <text x="920" y="104" text-anchor="middle" font-weight="600">Claude</text>
-        <text x="920" y="126" text-anchor="middle" font-weight="600">Code</text>
+        <text x="920" y="116" text-anchor="middle" font-weight="600">Cursor</text>
         <text x="400" y="200" text-anchor="middle" class="muted" font-size="14">git pull --ff-only · copies (not symlinks) · silent when nothing changed</text>
       </svg>
       <figcaption>The sync happens at session start, so a change lands in the session <em>after</em> the one that pulled it. Run <code>scripts/sync.sh</code> and restart to apply now.</figcaption>
@@ -187,7 +186,7 @@
         <text x="335" y="99" text-anchor="middle" font-weight="600" font-size="15">path rules</text>
         <text x="335" y="121" text-anchor="middle" class="muted" font-size="13">when a matching file is read</text>
         <rect class="box t" x="240" y="160" width="190" height="70" rx="8" stroke-width="2.5"/>
-        <text x="335" y="189" text-anchor="middle" font-weight="600" font-size="15">project .claude/rules</text>
+        <text x="335" y="189" text-anchor="middle" font-weight="600" font-size="15">project .cursor/rules</text>
         <text x="335" y="211" text-anchor="middle" class="muted" font-size="13">by path, private facts</text>
         <!-- skills -->
         <rect class="box s" x="480" y="70" width="190" height="70" rx="8" stroke-width="2.5"/>
@@ -198,7 +197,7 @@
         <text x="575" y="211" text-anchor="middle" class="muted" font-size="13">after every PHP edit</text>
         <!-- commands / agent -->
         <rect class="box c" x="720" y="70" width="240" height="70" rx="8" stroke-width="2.5"/>
-        <text x="840" y="99" text-anchor="middle" font-weight="600" font-size="15">/pb:* commands</text>
+        <text x="840" y="99" text-anchor="middle" font-weight="600" font-size="15">/pb-* commands</text>
         <text x="840" y="121" text-anchor="middle" class="muted" font-size="13">only when you type them</text>
         <rect class="box a" x="720" y="160" width="240" height="70" rx="8" stroke-width="2.5"/>
         <text x="840" y="189" text-anchor="middle" font-weight="600" font-size="15">wp-reviewer agent</text>
@@ -213,7 +212,7 @@
 <section id="rules">
   <div class="wrap">
     <h2>📐 Rules</h2>
-    <p class="sub">Installed to <code>~/.claude/rules/playbook/</code>. Only <code>core.md</code> is always on; the rest declare <code>paths:</code> and load when Claude reads or edits a matching file.</p>
+    <p class="sub">Cursor loads <code>.cursor/rules/</code>. Only <code>core.mdc</code> is always on; the rest declare <code>globs</code> and load when a matching file is in context. Edit <code>rules/*.md</code>, then run <code>scripts/export-cursor.py</code>.</p>
     <div class="grid">
       {{RULES}}
     </div>
@@ -223,7 +222,7 @@
 <section id="skills">
   <div class="wrap">
     <h2>🧠 Skills</h2>
-    <p class="sub">Installed to <code>~/.claude/skills/&lt;name&gt;/</code>. Claude sees every description at all times and loads the full body only when the task matches.</p>
+    <p class="sub">Skills live in <code>skills/&lt;name&gt;/</code> and are copied to <code>~/.cursor/skills/</code>. Cursor sees every description and loads the full body only when the task matches.</p>
     <div class="grid">
       {{SKILLS}}
     </div>
@@ -233,7 +232,7 @@
 <section id="commands">
   <div class="wrap">
     <h2>⌨️ Commands</h2>
-    <p class="sub">Namespaced as <code>/pb:…</code> so they never shadow a project's own commands. They load only when typed.</p>
+    <p class="sub">Cursor command ids are <code>/pb-…</code> so they never shadow a project's own commands. They load only when typed.</p>
     <div class="grid">
       {{COMMANDS}}
     </div>
@@ -245,7 +244,7 @@
     <h2>🕵️ Agent &amp; hook</h2>
     <div class="grid">
       {{AGENTS}}
-      <article class="card hook"><h4>hooks/phpcs-on-edit.sh</h4><p>PostToolUse hook: runs PHPCS (errors only) on each PHP file Claude edits and sends problems straight back so Claude fixes them before moving on. Warnings are left to <code>wp-review</code> and CI.</p><p class="loads">Runs: after every Edit / Write of a <code>.php</code> file</p></article>
+      <article class="card hook"><h4>hooks/phpcs-on-edit.sh</h4><p>Runs PHPCS (errors only) on a PHP file after an edit and sends the problems back. Warnings are left to <code>wp-review</code> and CI.</p><p class="loads">Runs: after a <code>.php</code> edit, when the hook is installed</p></article>
     </div>
   </div>
 </section>
@@ -253,7 +252,7 @@
 <section id="template">
   <div class="wrap">
     <h2>📁 Project template</h2>
-    <p class="sub"><code>templates/project/</code> is a drop-in kit for a theme repo. <code>/pb:new-project</code> copies it in. Project facts go in these files; the generic standards stay in the playbook.</p>
+    <p class="sub"><code>templates/project/</code> is a drop-in kit for a theme repo. <code>/pb-new-project</code> copies it in. Project facts go in these files; the generic standards stay in the playbook.</p>
     <div class="grid">
       <article class="card tpl"><h4>CLAUDE.md</h4><p>Agent brief under 2 KB: stack, how work ships, commands, project facts and hard no's, what to ask first, a pointer to <code>doc-references</code>.</p></article>
       <article class="card tpl"><h4>.claude/settings.json</h4><p>Permissions: allow safe git/gh/npm/composer/phpcs; ask for <code>wp</code> and PR reviews; deny force-push, pushes to <code>main</code>, DB resets, <code>rm -rf</code>, reading <code>.env</code>. <code>WebFetch</code> allowed on every <code>doc-references</code> domain. PHPCS hook wired in.</p></article>
@@ -270,9 +269,9 @@
     <figure>
       <svg viewBox="0 0 1000 170" role="img" aria-labelledby="f3t f3d">
         <title id="f3t">Ship workflow</title>
-        <desc id="f3d">Describe the change, run /pb:fix or /pb:ship, a PR opens with auto-merge, CI passes, squash-merge, deploy.yml builds and swaps the theme over SSH, a health check runs, and the deploy rolls back automatically if unhealthy.</desc>
+        <desc id="f3d">Describe the change, run /pb-fix or /pb-ship, a PR opens with auto-merge, CI passes, squash-merge, deploy.yml builds and swaps the theme over SSH, a health check runs, and the deploy rolls back automatically if unhealthy.</desc>
         <g font-size="14">
-          <rect class="box c" x="10" y="50" width="130" height="60" rx="8" stroke-width="2"/><text x="75" y="86" text-anchor="middle" font-weight="600">/pb:fix · /pb:ship</text>
+          <rect class="box c" x="10" y="50" width="140" height="60" rx="8" stroke-width="2"/><text x="80" y="86" text-anchor="middle" font-weight="600">/pb-fix · /pb-ship</text>
           <path class="arrow" d="M140,80 L170,80"/>
           <rect class="box" x="170" y="50" width="130" height="60" rx="8"/><text x="235" y="78" text-anchor="middle" font-weight="600">PR opens</text><text x="235" y="98" text-anchor="middle" class="muted" font-size="12">auto-merge on</text>
           <path class="arrow" d="M300,80 L330,80"/>
@@ -299,14 +298,15 @@
 bash ~/code/ai-dev-standards-playbook/scripts/install.sh</code></pre>
     <p>Then in any project:</p>
 <pre><code>cd ~/code/my-theme
-claude
-/pb:new-project my-theme https://example.com</code></pre>
+# In Cursor, after the plugin is installed:
+/pb-new-project my-theme https://example.com</code></pre>
     <h3>Scripts</h3>
     <table>
       <thead><tr><th>Script</th><th>Does</th></tr></thead>
       <tbody>
-        <tr><td><code>scripts/install.sh</code></td><td>Copies the playbook into <code>~/.claude</code> and adds the SessionStart hook (backup at <code>settings.json.bak-playbook</code>).</td></tr>
-        <tr><td><code>scripts/sync.sh</code></td><td>Pulls <code>main</code> and re-copies rules, skills, commands, agents and hooks. Run by the hook; run by hand to apply right away.</td></tr>
+        <tr><td><code>scripts/install.sh</code></td><td>Copies skills and rules into <code>~/.cursor</code>. Also keeps the Claude Code copy in <code>~/.claude</code>.</td></tr>
+        <tr><td><code>scripts/sync.sh</code></td><td>Pulls <code>main</code> and re-copies rules and skills into <code>~/.cursor</code> and <code>~/.claude</code>.</td></tr>
+        <tr><td><code>scripts/export-cursor.py</code></td><td>Writes <code>.cursor/rules/**/*.mdc</code> from <code>rules/</code>. CI fails if the copy is stale.</td></tr>
         <tr><td><code>scripts/new-project.sh</code></td><td>Copies the project template into the current repo without overwriting anything.</td></tr>
         <tr><td><code>scripts/build-docs.py</code></td><td>Renders this site from <code>docs/src/template.html</code> plus the frontmatter of every rule, skill, command and agent. Runs in CI on every push to <code>main</code>.</td></tr>
         <tr><td><code>scripts/validate.py</code></td><td>CI check: frontmatter, core-rule size budget, private-detail scan, CHANGELOG discipline.</td></tr>
@@ -339,7 +339,7 @@ claude
 
 <footer><div class="wrap" style="text-align:center">
   <p><a href="https://github.com/matthummel-pa/ai-dev-standards-playbook">GitHub repo</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/tree/main/playbook">Guides</a> · <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/issues">Issues</a> · <a href="https://matthummel.com">matthummel.com</a></p>
-  <p>Built for <a href="https://claude.com/claude-code">Claude Code</a> · WordPress · Sage/Bedrock · Tailwind CSS v4 · GitHub Actions</p>
+  <p>Built for <a href="https://cursor.com">Cursor</a> · WordPress · Sage/Bedrock · Tailwind CSS v4 · GitHub Actions</p>
   <p>Public repo, generic standards only. Hosts, logins, client names and product data stay in each project's own <code>CLAUDE.md</code>.</p>
   <p><a href="#top">↑ Back to top</a></p>
 </div></footer>

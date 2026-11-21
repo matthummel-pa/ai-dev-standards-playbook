@@ -1,0 +1,16 @@
+{
+  "name": "matthummel-playbook",
+  "owner": {
+    "name": "Matt Hummel"
+  },
+  "metadata": {
+    "description": "AI dev standards for WordPress and front-end projects."
+  },
+  "plugins": [
+    {
+      "name": "ai-dev-standards-playbook",
+      "source": ".",
+      "description": "Path-scoped WordPress, Sage, SEO and front-end rules, plus skills and pb-* commands."
+    }
+  ]
+}

@@ -2,10 +2,46 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
-## [1.4.1] - 2026-10-30
+## [1.6.2] - 2026-11-20
 
 ### Added
 - `skills/doc-references`: Freemius Help Center (https://freemius.com/help/) as the reference for plugin/theme monetization; `freemius.com` added to the project template's `WebFetch` allowlist.
+
+## [1.6.1] - 2026-11-16
+
+### Added
+- `playbook/cursor-environments.md`: what a cloud agent loads, and the shared Build install line.
+- `templates/project/.cursor/environment.json` runs `cloud-install.sh`, then `composer install` and `npm ci`.
+- Project template `CLAUDE.md` has a Cursor Cloud section. Studio is not on the image.
+
+### Changed
+- Project rules win on text domain, local commands, target size, theme switch, and deploy. The text domain is the project's, not `sage`.
+- `scripts/new-project.sh` does not add the SSH deploy kit when the repo already has a deploy or release workflow.
+- `scripts/cloud-install.sh` is documented as a Build install step. It still does not install WordPress.
+
+## [1.6.0] - 2026-11-12
+
+### Added
+- `skills/token-discipline`: one task, named files, CI for checks, so a session spends fewer credits.
+- `skills/theme-baseline`: local Studio on a Mac, checks on Linux, and an SSH deploy to the live site. A theme sold as a zip keeps that release.
+- `scripts/cloud-install.sh`: PHP 8.3, Composer, and WP-CLI for a cloud agent. It does not install WordPress.
+
+### Changed
+- The project deploy job is named Deploy over SSH.
+
+## [1.5.0] - 2026-11-12
+
+### Added
+- This repo is the Cursor playbook. Plugin (`.cursor-plugin/plugin.json` and `marketplace.json`), generated `.mdc` rules, `/pb-*` commands and the `wp-reviewer` agent install from this repo. Claude Code still receives a copy in `~/.claude`.
+- `scripts/export-cursor.py`: writes `.cursor/rules/**/*.mdc` from `rules/` (`paths` → `globs`; only `core.md` is always on). `validate.py` fails when the copy is stale or the plugin version drifts from `VERSION`.
+- `scripts/sync.sh` and `install.sh` also copy skills to `~/.cursor/skills/` and the generated rules to `~/.cursor/rules/playbook/`.
+
+### Fixed
+- `scripts/sync.sh` honors `--force` when it is passed after `--no-pull` (`install.sh` does that).
+
+### Changed
+- Each `/pb:*` command has a Cursor `name` (`pb-ship`, `pb-fix`, `pb-plan`, `pb-review`, `pb-new-project`, `pb-new-theme`, `pb-dev`). Claude Code still uses the `/pb:` names.
+- Project template `CLAUDE.md` points Cursor at the plugin instead of a second copy of the rules.
 
 ## [1.4.0] - 2026-10-25
 

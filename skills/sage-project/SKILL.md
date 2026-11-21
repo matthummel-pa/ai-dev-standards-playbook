@@ -9,8 +9,8 @@ Two scripts in the playbook repo do the work. Run them; don't re-type their step
 
 | Need | Command |
 | --- | --- |
-| New theme repo | `bash ~/code/ai-dev-standards-playbook/scripts/new-theme.sh <slug> <https://site> ["Theme Name"]` (or `/pb:new-theme`) |
-| Anything local | `bash ~/code/ai-dev-standards-playbook/scripts/wp-local.sh <command>` (or `/pb:dev`) |
+| New theme repo | `bash ~/code/ai-dev-standards-playbook/scripts/new-theme.sh <slug> <https://site> ["Theme Name"]` (or `/pb-new-theme`) |
+| Anything local | `bash ~/code/ai-dev-standards-playbook/scripts/wp-local.sh <command>` (or `/pb-dev`) |
 
 `wp-local.sh` commands: `doctor` · `up` · `down` · `status` · `use` · `dev` · `clear` · `wp …` · `list` · `get <repo>` · `branch <name>`. Run `help` for the one-line meanings.
 
@@ -41,4 +41,4 @@ How it fits together: one Studio site per theme folder name (read from the Vite 
 - **"Vite manifest not found" / theme fatals:** the build is missing. `up` builds it once; rerun `npm run build`.
 - **Link works with Studio's default file access** (verified on Studio CLI 2.0.4 on Windows: theme active, front end and Vite assets served through the junction). If a future Studio version stops following links, `up` warns. Direct-clone fallback (the scripts then stop managing that site): `up` has already created the link, so remove the link first, without touching the repo. Windows: `powershell -NoProfile -Command "[System.IO.Directory]::Delete('<site>\wp-content\themes\<folder>')"`; macOS/Linux: `rm <site>/wp-content/themes/<folder>` (no trailing slash). Then `git clone <repo-url> <site>/wp-content/themes/<folder>`, run `composer install`, `npm install` and `npm run build` there, and use `studio wp theme activate <folder>` from the site folder. `up`, `use` and `branch` refuse a real folder, so drive that site with `studio` directly.
 - Run `wp-local.sh doctor` first when anything fails.
-- Local only. These scripts never deploy; staging and production follow the project's own `CLAUDE.md`.
+- Local only. These scripts never deploy. A site you host ships over SSH to the live site (`theme-baseline`). A theme sold as a zip keeps that release.

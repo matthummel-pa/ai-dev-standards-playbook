@@ -1,5 +1,6 @@
 ---
 description: Checks, commit, push, PR with auto-merge (any project)
+name: pb-ship
 ---
 
 Ship the current work. Don't ask questions unless a check fails in a way you can't fix.

@@ -1,11 +1,11 @@
 # Automated ship workflow (WordPress / Sage on SSH hosting)
 
-**Loop:** describe the change → `/pb:fix` or `/pb:ship` → PR opens with auto-merge → CI passes → squash-merge →
+**Loop:** describe the change → `/pb-fix` or `/pb-ship` → PR opens with auto-merge → CI passes → squash-merge →
 GitHub Actions builds the theme and deploys over SSH → health check → automatic rollback if the site is unhealthy.
 
 ## One-time setup per project
 
-1. `/pb:new-project <theme-slug> <https://site>` in the repo (copies `templates/project/` without overwriting).
+1. `/pb-new-project <theme-slug> <https://site>` in the repo (copies `templates/project/` without overwriting).
 2. Host: enable SSH (Hostinger: hPanel → Advanced → SSH Access; Premium/Business plans and up).
 3. In Git Bash/WSL from the repo:
    ```bash
@@ -26,5 +26,5 @@ GitHub Actions builds the theme and deploys over SSH → health check → automa
 
 ## Approval
 
-Opening the PR with `/pb:ship` is the approval. For a click-to-deploy gate, add yourself as a required reviewer on the
+Opening the PR with `/pb-ship` is the approval. For a click-to-deploy gate, add yourself as a required reviewer on the
 `production` environment in GitHub settings.

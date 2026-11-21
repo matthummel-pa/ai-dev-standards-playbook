@@ -15,8 +15,8 @@ Before reading code:
 
 Model choice:
 
-- Faster model for `/pb-fix` and `/pb-ship`.
-- Stronger model for `/pb-plan` only.
+- Faster model for `/pb:fix` and `/pb:ship`.
+- Stronger model for `/pb:plan` only.
 
 Checks:
 

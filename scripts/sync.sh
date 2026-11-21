@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pull the Cursor playbook and copy it into ~/.cursor (and ~/.claude, for Claude Code).
+# Pull the playbook and copy it into Claude Code's user config (~/.claude).
 # Runs from a SessionStart hook (silent unless something changed) or by hand.
 #   bash scripts/sync.sh            pull + install
 #   bash scripts/sync.sh --no-pull  install only
@@ -9,9 +9,6 @@
 #   commands/ → ~/.claude/commands/pb/           (/pb:ship, /pb:fix, /pb:plan, /pb:review, /pb:new-project, /pb:new-theme, /pb:dev)
 #   agents/   → ~/.claude/agents/playbook/
 #   hooks/    → ~/.claude/hooks/playbook/
-# Cursor (same revision stamp; skills mirror ~/.claude, rules mirror .cursor/rules):
-#   .cursor/rules → ~/.cursor/rules/playbook/
-#   skills/*      → ~/.cursor/skills/<name>/     (tracked in .playbook-manifest)
 set -uo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -52,7 +49,7 @@ replace_dir "$repo/commands/pb"  "$dest/commands/pb"
 replace_dir "$repo/agents"       "$dest/agents/playbook"
 replace_dir "$repo/hooks"        "$dest/hooks/playbook"
 # A CRLF hook script fails on its shebang.
-sed -i 's/$//' "$dest/hooks/playbook/"*.sh 2>/dev/null || true
+sed -i 's/\r$//' "$dest/hooks/playbook/"*.sh 2>/dev/null || true
 chmod +x "$dest/hooks/playbook/"*.sh 2>/dev/null || true
 
 # Skills sit one level deep, so remove only the ones this playbook installed last time.
@@ -67,25 +64,6 @@ for dir in "$repo"/skills/*/; do
   rm -rf "${dest:?}/skills/$name"
   cp -R "$dir" "$dest/skills/$name"
   echo "$name" >> "$manifest"
-done
-
-# Cursor reads user skills from ~/.cursor/skills. Rules go to ~/.cursor/rules/playbook
-# for local mirrors. Installing the plugin (see README) is what applies them in every project.
-cursor="${CURSOR_CONFIG_DIR:-$HOME/.cursor}"
-cursor_manifest="$cursor/.playbook-manifest"
-mkdir -p "$cursor/rules" "$cursor/skills"
-replace_dir "$repo/.cursor/rules" "$cursor/rules/playbook"
-if [ -f "$cursor_manifest" ]; then
-  while IFS= read -r name; do
-    [ -n "$name" ] && rm -rf "${cursor:?}/skills/$name"
-  done < "$cursor_manifest"
-fi
-: > "$cursor_manifest"
-for dir in "$repo"/skills/*/; do
-  name="$(basename "$dir")"
-  rm -rf "${cursor:?}/skills/$name"
-  cp -R "$dir" "$cursor/skills/$name"
-  echo "$name" >> "$cursor_manifest"
 done
 
 echo "$head" > "$stamp"

@@ -1,6 +1,5 @@
 ---
 description: Set up a new or existing repo with the playbook project template (CLAUDE.md, settings, ship workflow)
-name: pb-new-project
 argument-hint: "[theme slug] [site url]"
 ---
 
@@ -11,4 +10,4 @@ Set up this repo with the playbook template: $ARGUMENTS
    If the repo already has a deploy or release workflow, it leaves that workflow in place and does not add the SSH kit.
 2. Fill the TODOs in the new `CLAUDE.md` from what the repo actually contains (stack, commands, local dev).
 3. Merge anything it skipped by hand, keeping the project's existing choices.
-4. `/pb-ship` (no auto-merge on this first PR).
+4. `/pb:ship` (no auto-merge on this first PR).

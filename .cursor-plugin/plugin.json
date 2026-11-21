@@ -1,6 +1,6 @@
 {
   "name": "ai-dev-standards-playbook",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Cursor playbook for WordPress and front-end work: path-scoped rules, skills, pb-* commands, and a Sage reviewer.",
   "author": {
     "name": "Matt Hummel"

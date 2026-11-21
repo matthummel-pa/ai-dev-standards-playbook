@@ -1,7 +1,7 @@
 ---
 paths:
-  - "**/*.md"
   - "docs/**"
+  - "**/{proposal,scope,sow,handoff,launch,invoice,client,onboarding}*.md"
 ---
 
 # Business operations

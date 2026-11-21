@@ -2,6 +2,18 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.6.3] - 2026-11-20
+
+### Added
+- `scripts/doctor.sh`: read-only health check (installed copy vs repo, CRLF, load budget per file type, skills that exist only in `~/.claude`). `doctor.sh worktrees <repo>` lists worktrees whose PR is merged and prints removal commands without running them.
+- `skills/seo-improvement`: staged, evidence-backed SEO audit and fix workflow for a WordPress repo. Approval required before robots, redirect, canonical or indexation changes.
+- `skills/playbook-guides`: points at the three guides in `playbook/` (rules architecture, token discipline, ship workflow).
+- `/pb:blueprint`: five-phase theme build from a gitignored `blueprint/` folder. WordPress, SEO, and copy standards stay in the path rules. `new-theme.sh` adds `blueprint/` to `.gitignore`; `sage.md` and `wordpress.md` read `blueprint/02-sitemap-wireframe.md` when it exists.
+- `.gitattributes`: LF line endings everywhere. A Windows CRLF checkout was being copied into `~/.claude`, which breaks hook shebangs.
+
+### Changed
+- `rules/business/business-ops.md` loaded on every Markdown file (README, CHANGELOG, notes). It now loads under `docs/**` and on proposal, scope, SOW, handoff, launch, invoice, client and onboarding files. Cuts about 2.8 KB from every other Markdown edit. The `.cursor/rules` copy is regenerated.
+
 ## [1.6.2] - 2026-11-20
 
 ### Added

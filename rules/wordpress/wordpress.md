@@ -9,6 +9,9 @@ paths:
 
 Security (escape, sanitize, nonces, `$wpdb->prepare`) lives in `wp-review.md`. This file covers the rest. If a project rule is more specific (tokens, a11y, text domain, deploy), that rule wins.
 
+## Local blueprint
+- If `blueprint/02-sitemap-wireframe.md` exists, follow it for page structure when editing `theme.json`, `functions.php`, or block templates. `blueprint/` is gitignored local research. Do not commit or deploy it. Start one with `/pb:blueprint`.
+
 ## Coding standards
 - Follow https://developer.wordpress.org/coding-standards/wordpress-coding-standards/. `phpcs` (config: `phpcs.xml.dist`) must report 0 errors on PHP files you touched. Pint owns formatting; WPCS owns security, i18n and WP API usage.
 - When the playbook hook is installed, it runs phpcs after a PHP edit. Fix what it reports.

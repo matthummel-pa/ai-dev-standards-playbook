@@ -14,6 +14,7 @@ Sage 10/11 themes: Blade, Acorn, Tailwind, Vite. Follow the official docs, not c
 - Verify hooks, parameters and deprecations at https://developer.wordpress.org/reference/ before writing code.
 
 ## Templates
+- If `blueprint/02-sitemap-wireframe.md` exists, follow its routes and heading outline. `blueprint/` stays gitignored.
 - The WordPress template hierarchy still applies; Blade lives in `resources/views/`.
 - Chrome lives in `sections/` (`header`, `footer`, `sidebar`); reusable chunks in `partials/`; named page templates in `template-*.blade.php`.
 - Data comes from View Composers (`app/View/Composers/`) or small `App\` helpers, not from logic in Blade.

@@ -89,6 +89,7 @@ cat >>.gitignore <<'EOF'
 .env.*
 !.env.example
 .claude/settings.local.json
+blueprint/
 *.log
 .DS_Store
 Thumbs.db

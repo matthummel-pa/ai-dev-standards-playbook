@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml"><img alt="Validate" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml/badge.svg"></a>
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml"><img alt="Docs site" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml/badge.svg"></a>
-  <a href="VERSION"><img alt="Version 1.6.2" src="https://img.shields.io/badge/version-1.6.2-0a66c2"></a>
+  <a href="VERSION"><img alt="Version 1.6.3" src="https://img.shields.io/badge/version-1.6.3-0a66c2"></a>
   <a href="#contribute"><img alt="Public, generic standards" src="https://img.shields.io/badge/standards-generic%20%26%20public-0f766e"></a>
 </p>
 
@@ -58,7 +58,7 @@ flowchart LR
 | Area | What you get | Loads |
 | --- | --- | --- |
 | 📐 **Rules** `rules/` | `core.md` (always on, < 1 KB) · WordPress standards, stack and review rules · Sage/Roots conventions · frontend/UX · SEO, GEO and analytics · marketing copy · business ops | By file path |
-| 🧠 **Skills** `skills/` | `doc-references` · `content-writer` · `growth-design` · `portfolio-seo` · `geo-blog-post` · `sage-architecture` · `sage-project` · `theme-baseline` · `token-discipline` | When the task needs them |
+| 🧠 **Skills** `skills/` | `doc-references` · `content-writer` · `growth-design` · `portfolio-seo` · `geo-blog-post` · `sage-architecture` · `sage-project` · `theme-baseline` · `token-discipline` · `seo-improvement` · `playbook-guides` | When the task needs them |
 | ⌨️ **Commands** `commands/pb/` | `/pb-new-theme` · `/pb-dev` · `/pb-new-project` · `/pb-plan` · `/pb-fix` · `/pb-review` · `/pb-ship` | When you type them |
 | 🕵️ **Agent** `agents/` | `wp-reviewer` — senior WordPress/Sage review of a diff before a PR | On request / proactively |
 | 🪝 **Hook** `hooks/` | `phpcs-on-edit.sh` — runs PHPCS on every PHP file Claude edits and feeds errors back | After every edit |
@@ -80,6 +80,8 @@ flowchart LR
 | `geo-blog-post` | Drafting a blog post for Google AI Overviews and LLM search (BLUF, E-E-A-T, FAQ, Article JSON-LD). |
 | `sage-architecture` | Adding ACF fields in PHP, Customizer settings, dark-mode defaults, the Tailwind/theme.json token bridge, or deploy workflows. |
 | `sage-project` | Starting a new Sage theme, or cloning/running/branching an existing theme repo locally with WordPress Studio and Vite. |
+| `seo-improvement` | Auditing and fixing a WordPress site's SEO in stages, from repo and rendered-page evidence. Asks before robots, redirect, canonical or indexing changes. |
+| `playbook-guides` | Before a ship, a plan, a rules change, or when asked how standards load. Points at the three guides in `playbook/`. |
 
 </details>
 
@@ -91,6 +93,7 @@ flowchart LR
 | --- | --- |
 | `/pb-new-theme <slug> <url> ["Name"]` | Scaffolds a new Sage 11 theme repo (Vite, Tailwind v4, project template), builds it, and starts its local Studio site. |
 | `/pb-dev [up \| dev \| get \| branch \| use \| clear \| doctor]` | Runs or edits a theme repo locally: Studio site, theme link, Vite hot reload, a worktree per branch. |
+| `/pb-blueprint [what]` | Writes a gitignored `blueprint/` (research, then sitemap and wireframe) and builds `theme.json`, templates, copy, and schema from it. |
 | `/pb-new-project [slug] [url]` | Copies the project template into the current repo without overwriting anything. |
 | `/pb-plan <what>` | Plans a large change before coding. |
 | `/pb-fix <what>` | Fixes a bug or makes a small change end to end, then ships it. |
@@ -180,7 +183,7 @@ Full loop in [`playbook/automated-ship-workflow.md`](playbook/automated-ship-wor
 3. Nothing changed → silent. Something changed → one line: `Playbook rules updated to abc1234 (…)`.
 4. Regenerate Cursor rule files after editing `rules/`: `python3 scripts/export-cursor.py`. CI fails if `.cursor/rules` is stale.
 
-To apply now: `bash ~/code/ai-dev-standards-playbook/scripts/sync.sh`, then start a new Cursor chat. The plugin reads this repo, so a merged plugin update follows the next install refresh.
+To apply now: `bash ~/code/ai-dev-standards-playbook/scripts/sync.sh`, then start a new chat. `bash scripts/doctor.sh` checks that the install matches the repo. The plugin reads this repo, so a merged plugin update follows the next install refresh.
 
 <a id="loads"></a>
 ## 🪶 What loads when
@@ -229,6 +232,7 @@ Full history in [`CHANGELOG.md`](CHANGELOG.md).
 
 | Version | Highlights |
 | --- | --- |
+| **1.6.3** | `/pb-blueprint`, `seo-improvement` and `playbook-guides`, `scripts/doctor.sh`, LF line endings enforced, `business-ops` loads on fewer files. |
 | **1.6.2** | `doc-references` adds the Freemius Help Center; `freemius.com` joins the project template's `WebFetch` allowlist. |
 | **1.6.1** | Cloud environments: one install line, project rules win on text domain, commands, target size, and deploy. `~/.cursor/rules` stays on the laptop. |
 | **1.5.0** | This is the Cursor playbook: plugin, generated `.mdc` rules, `/pb-*` commands, `wp-reviewer`. `sync.sh` fills `~/.cursor`. |

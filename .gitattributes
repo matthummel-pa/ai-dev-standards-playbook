@@ -1,0 +1,5 @@
+# Keep LF everywhere. sync.sh copies these files into ~/.claude and runs the .sh files in Git Bash/WSL,
+# where a CRLF checkout breaks hook shebangs.
+* text=auto eol=lf
+*.sh text eol=lf
+*.svg text eol=lf

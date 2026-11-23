@@ -14,7 +14,7 @@ The owner's own voice, channels and promises live in a private overlay, not here
 
 ## 2. Subject focus
 - Content covers business strategy, web design, custom development, UX, SEO, and marketing tips with actionable value.
-- Journal posts include code a reader can adapt or use.
+- Developer-facing posts include code a reader can adapt or use. Posts written for business owners do not need code.
 - Code in posts is tested before publishing and states the WordPress and PHP version it needs.
 
 ## 3. The Rule of One

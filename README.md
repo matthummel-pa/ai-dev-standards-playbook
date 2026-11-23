@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml"><img alt="Validate" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/validate.yml/badge.svg"></a>
   <a href="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml"><img alt="Docs site" src="https://github.com/matthummel-pa/ai-dev-standards-playbook/actions/workflows/pages.yml/badge.svg"></a>
-  <a href="VERSION"><img alt="Version 1.7.0" src="https://img.shields.io/badge/version-1.7.0-0a66c2"></a>
+  <a href="VERSION"><img alt="Version 1.7.1" src="https://img.shields.io/badge/version-1.7.1-0a66c2"></a>
   <a href="#contribute"><img alt="Public, generic standards" src="https://img.shields.io/badge/standards-generic%20%26%20public-0f766e"></a>
 </p>
 
@@ -218,6 +218,7 @@ Full history in [`CHANGELOG.md`](CHANGELOG.md).
 
 | Version | Highlights |
 | --- | --- |
+| **1.7.1** | Blog rules aligned: one primary reader per post, grade 6–8, Power Platform keyword pillar removed. |
 | **1.7.0** | Claude Code only again: Cursor plugin, generated rules and export script removed; `/pb:*` command names restored. |
 | **1.6.3** | `/pb:blueprint`, `seo-improvement` and `playbook-guides`, `scripts/doctor.sh`, LF line endings enforced, `business-ops` loads on fewer files. |
 | **1.6.2** | `doc-references` adds the Freemius Help Center; `freemius.com` joins the project template's `WebFetch` allowlist. |

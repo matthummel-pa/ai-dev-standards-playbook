@@ -49,7 +49,7 @@ When asked to review, edit, or write content, run this multi-pass audit. Edit **
 1. **Pass 1: Clarity and fluff**
    - Cut filler and jargon: “use” not “utilize”; “to” not “in order to”; “works” not “impactful.”
 2. **Pass 2: Grade level**
-   - Target Flesch–Kincaid **grade 7–8**. Conversational, not academic. Keep accurate technical nouns (WordPress, Vite, Sage).
+   - Target Flesch–Kincaid **grade 6–8**. Conversational, not academic. Keep accurate technical nouns (WordPress, Vite, Sage).
 3. **Pass 3: Structure**
    - Hierarchy is Blade/HTML (`h1`–`h3`), not Markdown `#` in PHP fields. No two consecutive sections that repeat the same idea.
 4. **Feedback delivery**

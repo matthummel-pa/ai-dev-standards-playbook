@@ -2,6 +2,13 @@
 
 All notable changes to the playbook. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions in `VERSION`.
 
+## [1.7.1] - 2026-11-22
+
+### Changed
+- `portfolio-seo`: a blog post picks one primary reader (Rule of One) instead of serving both readers equally. The Power Platform keyword pillar is gone.
+- `content-writer`: reading level target is grade 6–8 (was 7–8).
+- `marketing-copy.md`: only developer-facing posts need code; posts for business owners do not.
+
 ## [1.7.0] - 2026-11-20
 
 ### Removed

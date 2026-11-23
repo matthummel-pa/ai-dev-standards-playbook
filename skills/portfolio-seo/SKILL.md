@@ -11,7 +11,7 @@ This rulebook balances friendly shop-owner copy with technical precision. Use it
 
 ## Dual-audience targeting
 
-Structure project write-ups and blog posts so two readers can both get value:
+Project write-ups and landing pages serve two readers. A blog post picks one of them as its primary reader (Rule of One) and gives the other one short section:
 
 - **Shop / agency (non-tech):** clear outcome, plain words, what they can edit or hand over. No fake metrics.
 - **Developer / peer:** stack, repo, snippets, how it ships (Sage, Tailwind, Vite, GitHub).
@@ -28,9 +28,8 @@ Prefer phrases that match work the owner actually does. Lead with craft, not cit
 | --- | --- | --- |
 | WordPress | `hire a WordPress developer` / custom theme | Sage 11 custom theme, page fields, Vite — not ACF unless the owner asks |
 | Web apps | `WordPress site for my shop` | custom frontend (Sage, Tailwind, Blade), plugins, other web apps |
-| Power Platform | `automate workflows with Power Platform` | custom connectors / APIs when it fits; it is **not** the main offer |
 
-Do not stuff all three pillars into every H1. One primary phrase per page. Secondary phrases belong in body copy, once or twice.
+Do not stuff both pillars into every H1. One primary phrase per page. Secondary phrases belong in body copy, once or twice.
 
 ---
 
